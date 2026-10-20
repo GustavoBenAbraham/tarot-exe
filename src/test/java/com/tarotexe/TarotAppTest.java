@@ -13,6 +13,57 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /** Requires a graphical desktop; actions run on the real JavaFX application thread. */
 class TarotAppTest {
+    @Test void animationCompletesAndReleasesReadingWithoutSkipping() throws Exception {
+        var stage = new java.util.concurrent.atomic.AtomicReference<Stage>();
+        var completed = new CountDownLatch(1);
+        try {
+            onFx(() -> {
+                var window = new Stage(); stage.set(window); new TarotApp().start(window);
+                var root = window.getScene().getRoot();
+                var area = (TextArea) root.lookup("#interpretation");
+                area.textProperty().addListener((o, before, after) -> { if (!after.isBlank()) completed.countDown(); });
+                ((Button) root.lookup("#draw")).fire();
+                assertTrue(((Button) root.lookup("#draw")).isDisabled());
+                assertTrue(((Button) root.lookup("#saveReading")).isDisabled());
+                assertTrue(area.getText().isEmpty());
+                assertTrue(((Button) root.lookup("#skipAnimation")).isVisible());
+            });
+            assertTrue(completed.await(8, TimeUnit.SECONDS), "Animation did not complete");
+            onFx(() -> {
+                var root = stage.get().getScene().getRoot();
+                assertFalse(((Button) root.lookup("#draw")).isDisabled());
+                assertFalse(((Button) root.lookup("#saveReading")).isDisabled());
+                assertFalse(((Button) root.lookup("#skipAnimation")).isVisible());
+                assertEquals(3, ((Pane) root.lookup("#cards")).getChildren().size());
+            });
+        } finally { onFx(() -> { if (stage.get() != null) stage.get().close(); }); }
+    }
+
+    @Test void cancelledAnimationCannotRestoreAnObsoleteReading() throws Exception {
+        var stage = new java.util.concurrent.atomic.AtomicReference<Stage>();
+        var settled = new CountDownLatch(1);
+        try {
+            onFx(() -> {
+                var window = new Stage(); stage.set(window); new TarotApp().start(window);
+                var root = window.getScene().getRoot();
+                ((Button) root.lookup("#draw")).fire();
+                ((Button) root.lookup("#clear")).fire();
+                // Even attempting to skip after cancellation must not restore the discarded draw.
+                ((Button) root.lookup("#skipAnimation")).fire();
+                var wait = new javafx.animation.PauseTransition(javafx.util.Duration.seconds(3));
+                wait.setOnFinished(e -> settled.countDown()); wait.play();
+            });
+            assertTrue(settled.await(6, TimeUnit.SECONDS));
+            onFx(() -> {
+                var root = stage.get().getScene().getRoot();
+                assertTrue(((Pane) root.lookup("#cards")).getChildren().isEmpty());
+                assertTrue(((TextArea) root.lookup("#interpretation")).getText().isEmpty());
+                assertTrue(((Button) root.lookup("#saveReading")).isDisabled());
+                assertFalse(((Button) root.lookup("#draw")).isDisabled());
+            });
+        } finally { onFx(() -> { if (stage.get() != null) stage.get().close(); }); }
+    }
+
     @Test void missingOrCorruptCardImageUsesCachedFallback() throws Exception {
         var badImage = historyFolder.resolve("broken.png"); java.nio.file.Files.writeString(badImage, "invalid image");
         onFx(() -> {
@@ -37,7 +88,7 @@ class TarotAppTest {
                 assertNull(root.lookup("#aiDeepen"));
                 assertNull(root.lookup("#aiConfigure"));
                 assertTrue(((Button) root.lookup("#exportReading")).isDisabled());
-                ((Button) root.lookup("#draw")).fire();
+                drawAndFinish((Button) root.lookup("#draw"));
                 assertNull(root.lookup("#readingTabs"));
                 assertFalse(((Button) root.lookup("#exportReading")).isDisabled());
                 assertFalse(((Button) root.lookup("#copyReading")).isDisabled());
@@ -57,7 +108,7 @@ class TarotAppTest {
             try {
                 new TarotApp().start(stage);
                 var root = stage.getScene().getRoot();
-                ((Button) root.lookup("#draw")).fire();
+                drawAndFinish((Button) root.lookup("#draw"));
                 root.resize(720, 600); root.applyCss(); root.layout();
                 var panel = (javafx.scene.layout.VBox) ((Pane) root.lookup("#cards")).getChildren().getFirst();
                 var preview = (javafx.scene.image.ImageView) panel.getChildren().getFirst();
@@ -93,7 +144,7 @@ class TarotAppTest {
                 new TarotApp().start(window);
                 assertTrue(window.isResizable());
                 assertEquals(javafx.stage.StageStyle.DECORATED, window.getStyle());
-                ((Button) window.getScene().lookup("#draw")).fire();
+                drawAndFinish((Button) window.getScene().lookup("#draw"));
                 text.set(((TextArea) window.getScene().lookup("#interpretation")).getText());
                 ((Button) window.getScene().lookup("#windowMaximize")).fire();
             });
@@ -137,7 +188,7 @@ class TarotAppTest {
             try {
                 new TarotApp(new com.tarotexe.service.HistoryStore(blocked)).start(stage);
                 var root = stage.getScene().getRoot();
-                ((Button) root.lookup("#draw")).fire();
+                drawAndFinish((Button) root.lookup("#draw"));
                 var text = ((TextArea) root.lookup("#interpretation")).getText();
                 var save = (Button) root.lookup("#saveReading"); save.fire();
                 assertFalse(save.isDisabled());
@@ -161,7 +212,7 @@ class TarotAppTest {
                 var save = (Button) root.lookup("#saveReading");
                 assertTrue(save.isDisabled());
                 ((TextField) root.lookup("#question")).setText("Como cuidar desta relação?");
-                ((Button) root.lookup("#draw")).fire();
+                drawAndFinish((Button) root.lookup("#draw"));
                 String text = ((TextArea) root.lookup("#interpretation")).getText();
                 save.fire(); assertTrue(save.isDisabled());
                 ((Button) root.lookup("#clear")).fire();
@@ -206,7 +257,7 @@ class TarotAppTest {
                 new TarotApp().start(stage);
                 var root = stage.getScene().getRoot();
                 ((TextField) root.lookup("#question")).setText("Uma reflexão longa: " + "situação atual ".repeat(30));
-                ((Button) root.lookup("#draw")).fire();
+                drawAndFinish((Button) root.lookup("#draw"));
                 for (double[] size : new double[][]{{1360, 900}, {960, 800}, {720, 600}}) {
                     stage.setWidth(size[0]); stage.setHeight(size[1]);
                     root.applyCss(); root.resize(size[0], size[1]); root.layout();
@@ -267,6 +318,12 @@ class TarotAppTest {
 
     @AfterAll static void stopToolkit() { Platform.exit(); }
 
+    private void drawAndFinish(Button draw) {
+        draw.fire();
+        var skip = (Button) draw.getScene().lookup("#skipAnimation");
+        if (skip.isVisible()) skip.fire();
+    }
+
     private void onFx(Runnable checks) throws Exception {
         var task = new FutureTask<Void>(() -> { checks.run(); return null; });
         Platform.runLater(task);
@@ -286,14 +343,14 @@ class TarotAppTest {
                 question.setText("Como seguir?");
                 assertNull(root.lookup("#readingTheme"));
                 assertNull(root.lookup("#reversed"));
-                draw.fire();
+                drawAndFinish(draw);
                 assertEquals(3, cards.getChildren().size());
                 assertTrue(interpretation.getText().contains("Como seguir?"));
                 assertTrue(interpretation.getText().contains("FOCO: Geral"));
                 @SuppressWarnings("unchecked")
                 var spread = (ComboBox<SpreadType>) root.lookup("#spread");
                 spread.setValue(SpreadType.ONE);
-                draw.fire();
+                drawAndFinish(draw);
                 assertEquals(1, cards.getChildren().size());
                 assertTrue(interpretation.getText().contains("(Normal)") || interpretation.getText().contains("(Invertida)"));
                 ((Button) root.lookup("#clear")).fire();
@@ -323,12 +380,12 @@ class TarotAppTest {
                 assertTrue(error.isVisible());
                 assertEquals("Pergunta deve ter até 500 caracteres.", error.getText());
                 assertEquals("501/500 caracteres", ((Label) root.lookup("#questionCount")).getText());
-                draw.fire();
+                drawAndFinish(draw);
                 assertTrue(((Pane) root.lookup("#cards")).getChildren().isEmpty());
                 question.setText("Corrigida");
                 assertFalse(draw.isDisabled());
                 assertFalse(error.isVisible());
-                draw.fire();
+                drawAndFinish(draw);
                 assertEquals(3, ((Pane) root.lookup("#cards")).getChildren().size());
             } finally { stage.close(); }
         });

@@ -28,3 +28,7 @@ Ilustrações: Pamela Colman Smith, Rider–Waite–Smith (1909). [Créditos](sr
 As interpretações foram revisadas com base no PDF de *78 Graus de Sabedoria*, de Rachel Pollack, fornecido pelo usuário. O [mapa de referência](docs/REFERENCIA-LEITURAS.md) documenta páginas, critérios de adaptação e limites. As respostas continuam sendo compostas por textos e regras locais.
 
 Todas as novas tiragens usam leitura geral, sem seletor de tema ou controle para desativar invertidas.
+
+## Animação do baralho
+
+Ao sortear, um monte de cartas com verso azul pontilhado é embaralhado, distribuído e revelado uma carta por vez. A animação usa desenho e movimentos locais no estilo de utilitários do fim dos anos 90. Mostrar cartas pula a sequência; Nova tiragem cancela. O resultado é sorteado uma única vez antes da apresentação e não muda ao pular a animação.

@@ -14,6 +14,8 @@ import javafx.stage.Screen;
 
 public final class TarotApp extends Application {
     private final HistoryStore history;
+    private final DrawAnimation drawAnimation = new DrawAnimation();
+    private final javafx.beans.property.BooleanProperty animating = new javafx.beans.property.SimpleBooleanProperty(false);
     private final Button export = new Button("Exportar .txt");
     private final Button copy = new Button("Copiar leitura");
     private final javafx.beans.property.IntegerProperty readingFontSize = new javafx.beans.property.SimpleIntegerProperty(15);
@@ -42,6 +44,9 @@ public final class TarotApp extends Application {
         question.setPromptText("Sua pergunta (opcional, até 500 caracteres)");
         Button draw = new Button("Embaralhar e tirar cartas"); draw.setDefaultButton(true);
         Button clear = new Button("Nova tiragem");
+        Button skip = new Button("Mostrar cartas"); skip.setId("skipAnimation");
+        skip.visibleProperty().bind(animating); skip.managedProperty().bind(animating);
+        skip.setOnAction(e -> drawAnimation.finish());
         save.setId("saveReading"); save.setDisable(true);
         export.setId("exportReading"); export.setDisable(true); copy.setId("copyReading"); copy.setDisable(true);
         export.setOnAction(e -> {
@@ -60,6 +65,7 @@ public final class TarotApp extends Application {
         });
         Button historyButton = new Button("Histórico"); historyButton.setId("history");
         historyButton.setOnAction(e -> HistoryWindow.show(stage, history, entry -> {
+            drawAnimation.cancel(); animating.set(false);
             currentAllowReversed = entry.allowReversed();
             spread.setValue(entry.reading().type());
             question.setText(entry.reading().question()); display(entry.reading(), entry.interpretation());
@@ -87,10 +93,11 @@ public final class TarotApp extends Application {
         var questionTooLong = question.lengthProperty().greaterThan(500);
         questionError.visibleProperty().bind(questionTooLong);
         questionError.managedProperty().bind(questionTooLong);
-        draw.disableProperty().bind(questionTooLong.or(spread.valueProperty().isNull()));
+        draw.disableProperty().bind(questionTooLong.or(spread.valueProperty().isNull()).or(animating));
+        question.disableProperty().bind(animating); spread.disableProperty().bind(animating);
         FlowPane settings = new FlowPane(10, 6, new Label("Tipo:"), spread);
         settings.setAlignment(Pos.CENTER_LEFT);
-        settings.getChildren().addAll(draw, clear, save, historyButton);
+        settings.getChildren().addAll(draw, clear, save, historyButton, skip);
         Region questionSpacer = new Region(); HBox.setHgrow(questionSpacer, Priority.ALWAYS);
         HBox questionHeader = new HBox(new Label("PERGUNTA"), questionSpacer, questionCount);
         VBox controls = new VBox(8, questionHeader, question, questionError, settings); controls.getStyleClass().add("panel");
@@ -122,12 +129,19 @@ public final class TarotApp extends Application {
         draw.setOnAction(e -> {
             try {
                 Reading reading = tarot.draw(question.getText(), spread.getValue());
-                currentAllowReversed = true;
-                display(reading, tarot.interpret(reading)); save.setDisable(false);
-                status.setText("Tiragem concluída: " + reading.cards().size() + " carta(s). Interpretação offline.");
-            } catch (Exception ex) { new Alert(Alert.AlertType.ERROR, ex.getMessage()).showAndWait(); }
+                String text = tarot.interpret(reading);
+                currentReading = null; save.setDisable(true); export.setDisable(true); copy.setDisable(true);
+                interpretation.clear(); animating.set(true); scroll.setVvalue(0);
+                status.setText("Embaralhando e distribuindo as cartas...");
+                var faces = reading.cards().stream().map(c -> (javafx.scene.Node) cardPanel(c)).toList();
+                drawAnimation.play(cards, faces, () -> {
+                    animating.set(false); currentAllowReversed = true;
+                    display(reading, text); save.setDisable(false);
+                    status.setText("Tiragem conclu\u00edda: " + reading.cards().size() + " carta(s). Interpreta\u00e7\u00e3o offline.");
+                });
+            } catch (Exception ex) { drawAnimation.cancel(); animating.set(false); new Alert(Alert.AlertType.ERROR, ex.getMessage()).showAndWait(); }
         });
-        clear.setOnAction(e -> { currentReading = null; save.setDisable(true); export.setDisable(true); copy.setDisable(true); cards.getChildren().clear(); interpretation.clear(); question.clear(); status.setText("Pronto para nova tiragem."); });
+        clear.setOnAction(e -> { drawAnimation.cancel(); animating.set(false); currentReading = null; save.setDisable(true); export.setDisable(true); copy.setDisable(true); cards.getChildren().clear(); interpretation.clear(); question.clear(); status.setText("Pronto para nova tiragem."); });
         Scene scene = new Scene(container, 960, 800);
         scene.getStylesheets().add(getClass().getResource("/retro.css").toExternalForm());
         stage.setTitle("Tarot.exe"); stage.setScene(scene); stage.setResizable(true);
@@ -151,6 +165,7 @@ public final class TarotApp extends Application {
         stage.widthProperty().addListener((o, before, value) -> { if (!stage.isMaximized() && !stage.isFullScreen()) normalWidth.set(value.doubleValue()); });
         stage.heightProperty().addListener((o, before, value) -> { if (!stage.isMaximized() && !stage.isFullScreen()) normalHeight.set(value.doubleValue()); });
         stage.addEventHandler(javafx.stage.WindowEvent.WINDOW_HIDDEN, e -> {
+            drawAnimation.cancel(); animating.set(false);
             if (rememberWindow) try {
                 new UiPreferences(Math.max(720, normalWidth.get()), Math.max(600, normalHeight.get()), stage.isMaximized(),
                         Math.max(0.2, Math.min(0.8, readingSplit.getDividerPositions()[0])), readingFontSize.get()).save(UiPreferences.localPath());
