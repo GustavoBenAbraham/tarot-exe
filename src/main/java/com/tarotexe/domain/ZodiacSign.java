@@ -21,5 +21,25 @@ public enum ZodiacSign {
     ZodiacSign(String label, String focus, String question) { this.label = label; this.focus = focus; this.question = question; }
     public String focus() { return focus; }
     public String question() { return question; }
+    /** Conventional tropical date ranges; approximate near solar ingresses. */
+    public static ZodiacSign fromBirthDate(java.time.LocalDate date) {
+        java.util.Objects.requireNonNull(date, "Data obrigatória");
+        int day = date.getDayOfMonth();
+        return switch (date.getMonthValue()) {
+            case 1 -> day < 20 ? CAPRICORN : AQUARIUS;
+            case 2 -> day < 19 ? AQUARIUS : PISCES;
+            case 3 -> day < 21 ? PISCES : ARIES;
+            case 4 -> day < 20 ? ARIES : TAURUS;
+            case 5 -> day < 21 ? TAURUS : GEMINI;
+            case 6 -> day < 21 ? GEMINI : CANCER;
+            case 7 -> day < 23 ? CANCER : LEO;
+            case 8 -> day < 23 ? LEO : VIRGO;
+            case 9 -> day < 23 ? VIRGO : LIBRA;
+            case 10 -> day < 23 ? LIBRA : SCORPIO;
+            case 11 -> day < 22 ? SCORPIO : SAGITTARIUS;
+            case 12 -> day < 22 ? SAGITTARIUS : CAPRICORN;
+            default -> throw new IllegalArgumentException("Mês inválido");
+        };
+    }
     @Override public String toString() { return label; }
 }

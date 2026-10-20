@@ -35,6 +35,6 @@ Ao sortear, um monte de cartas com verso azul pontilhado é embaralhado, distrib
 
 ## Consulta pessoal
 
-Sua apresentação (opcional) permite informar nome ou apelido, nascimento, local e signo. A preparação e a leitura usam o nome; o signo informado acrescenta um contexto ao conselho. Os dados são locais e só entram no histórico ao salvar a consulta. Data, horário e local ainda não calculam signo ou ascendente.
+Sua apresentação (opcional) permite informar nome ou apelido, nascimento e local. O signo aparece automaticamente ao preencher a data. A preparação e a leitura usam o nome; o signo identificado acrescenta um contexto ao conselho. Os dados são locais e só entram no histórico ao salvar a consulta. O signo usa intervalos convencionais de dia e mês, com resultado aproximado nas transições. O ascendente ainda não é calculado.
 
 Veja a [estrutura da consulta](docs/CONSULTA.md), incluindo a próxima etapa de corte e escolha de cartas fechadas.

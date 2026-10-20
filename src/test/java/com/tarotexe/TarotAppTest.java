@@ -36,9 +36,10 @@ class TarotAppTest {
                         assertTrue(((Label) form.lookup("#profileError")).getText().contains("futuro"));
                         ((TextField) form.lookup("#birthDate")).setText("12/07/1994");
                         ((TextField) form.lookup("#birthTime")).setText("09:30");
-                        @SuppressWarnings("unchecked")
-                        var sign = (ComboBox<com.tarotexe.domain.ZodiacSign>) form.lookup("#consultantSign");
-                        sign.setValue(com.tarotexe.domain.ZodiacSign.CANCER);
+                        assertEquals("Câncer", ((Label) form.lookup("#consultantSign")).getText());
+                        ((TextField) form.lookup("#birthDate")).clear();
+                        assertEquals("Preencha a data para descobrir", ((Label) form.lookup("#consultantSign")).getText());
+                        ((TextField) form.lookup("#birthDate")).setText("12/07/1994");
                         ((Button) form.lookup("#profileContinue")).fire();
                     } catch (Throwable ex) { failure.set(ex); dialogStage.close(); }
                 });

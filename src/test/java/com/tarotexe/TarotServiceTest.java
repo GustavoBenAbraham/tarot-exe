@@ -9,6 +9,20 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TarotServiceTest {
+    @Test void zodiacDateRangesCoverAllTransitionsAndLeapDay() {
+        var signs = com.tarotexe.domain.ZodiacSign.values();
+        int[][] starts = {{3,21}, {4,20}, {5,21}, {6,21}, {7,23}, {8,23},
+                {9,23}, {10,23}, {11,22}, {12,22}, {1,20}, {2,19}};
+        for (int i = 0; i < signs.length; i++) {
+            var date = java.time.LocalDate.of(2000, starts[i][0], starts[i][1]);
+            assertEquals(signs[i], com.tarotexe.domain.ZodiacSign.fromBirthDate(date));
+            assertEquals(signs[(i + 11) % 12], com.tarotexe.domain.ZodiacSign.fromBirthDate(date.minusDays(1)));
+        }
+        assertEquals(com.tarotexe.domain.ZodiacSign.PISCES,
+                com.tarotexe.domain.ZodiacSign.fromBirthDate(java.time.LocalDate.of(2000, 2, 29)));
+        assertEquals(com.tarotexe.domain.ZodiacSign.CAPRICORN,
+                com.tarotexe.domain.ZodiacSign.fromBirthDate(java.time.LocalDate.of(2000, 12, 31)));
+    }
     @Test void profilePersonalizesReadingWithoutChangingRandomDraw() {
         var profile = new com.tarotexe.domain.ConsultantProfile("Ana", java.time.LocalDate.of(1994, 7, 12),
                 java.time.LocalTime.of(9, 30), "São Paulo, Brasil", com.tarotexe.domain.ZodiacSign.CANCER);

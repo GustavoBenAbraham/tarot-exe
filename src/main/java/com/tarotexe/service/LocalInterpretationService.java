@@ -58,7 +58,7 @@ public final class LocalInterpretationService implements InterpretationService {
             text.append("\nCONTEXTO ASTROLÓGICO\n").append(sign).append(" — ").append(sign.focus()).append(". ")
                 .append(sign.question()).append("\n")
                 .append("Relacione essa pergunta ao conselho de ").append(advice.card().name())
-                .append(". O signo informado não altera as cartas sorteadas.\n");
+                .append(". O signo não altera as cartas sorteadas.\n");
         }
         text.append("\nPRÓXIMO PASSO\n").append(catalog.detail(advice.card().id()).action())
             .append(" Depois, registre o que observou e o que deseja ajustar.\n\n")

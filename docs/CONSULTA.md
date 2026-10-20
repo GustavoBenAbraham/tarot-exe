@@ -2,7 +2,7 @@
 
 ## Primeira etapa implementada
 
-1. Apresentação opcional: nome ou apelido, data, horário, local de nascimento e signo informado pela pessoa.
+1. Apresentação opcional: nome ou apelido, data, horário, local de nascimento e signo identificado automaticamente pela data.
 2. Preparação: acolhimento pelo nome e convite para formular a pergunta.
 3. Tiragem: sorteio local, animação e revelação, sempre com possibilidade de inversões.
 4. Leitura: catálogo das cartas, contexto opcional do signo e conselho.
@@ -13,7 +13,7 @@ A apresentação é aberta pelo botão Sua apresentação (opcional). Continuar 
 ## Dados e responsabilidade de cada componente
 
 - ConsultantProfile: contexto imutável da pessoa; campos opcionais e limites de tamanho.
-- ZodiacSign: perguntas editoriais para os 12 signos, escolhidos pela pessoa; não calcula posições astronômicas.
+- ZodiacSign: perguntas editoriais para os 12 signos, identificados por intervalos convencionais de dia e mês; não calcula posições astronômicas.
 - Reading: fotografia da consulta, incluindo o perfil daquele momento.
 - ConsultationDialog: validação de data, horário e campos de apresentação.
 - TarotService: sorteio recebe o perfil apenas para anexar ao resultado. Nome, data, horário, cidade e signo não são usados como sementes ou pesos.
@@ -32,10 +32,15 @@ O histórico registra apenas consultas concluídas. A leitura é produzida depoi
 
 ## Astrologia: limite atual e evolução
 
-O signo é informado pela pessoa. Não se usa uma tabela fixa de datas para apresentar um cálculo como exato. Em uma futura implementação de mapa natal, será necessário definir efemérides, coordenadas, fuso histórico e horário de nascimento, além da política para dados desconhecidos.
+O signo aparece automaticamente durante o preenchimento da data, usando intervalos convencionais. O ano valida a data, inclusive anos bissextos; não altera os limites da tabela. O resultado é identificado como aproximado, pois não há cálculo de efemérides. Datas inválidas, incompletas e futuras não recebem um signo válido. Em uma futura implementação de mapa natal, será necessário definir efemérides, coordenadas, fuso histórico e horário de nascimento, além da política para dados desconhecidos.
 
 Referência sobre mudança de signo e dados de nascimento: [Sun Sign Changes, Cafe Astrology](https://cafeastrology.com/sunsignbornonacusp.html). As perguntas de cada signo são adaptações editoriais locais; não são diagnósticos de personalidade nem transcrições dessa fonte.
 
 ## Verificações
 
 Cobrir consulta anônima, dados incompletos, data inválida e futura, cancelamento da apresentação, restauração do perfil no histórico, persistência compatível e igualdade do sorteio com ou sem perfil sob a mesma fonte de aleatoriedade.
+
+
+### Intervalos usados
+
+Áries: 21/03; Touro: 20/04; Gêmeos: 21/05; Câncer: 21/06; Leão: 23/07; Virgem: 23/08; Libra: 23/09; Escorpião: 23/10; Sagitário: 22/11; Capricórnio: 22/12; Aquário: 20/01; Peixes: 19/02. Cada intervalo termina no dia anterior ao próximo. Os limites são uma convenção local, sem sobreposição; tabelas populares podem divergir em um dia.
