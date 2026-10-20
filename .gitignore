@@ -1,0 +1,16 @@
+target/
+.settings/
+.project
+.classpath
+.idea/
+*.log
+dist/
+.build-tools/
+.vscode/
+.env
+.env.*
+!.env.example
+.tarot-exe/
+*.lnk
+.DS_Store
+Thumbs.db

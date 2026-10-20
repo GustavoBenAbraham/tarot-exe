@@ -1,0 +1,47 @@
+name: Java CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: java-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  core-tests:
+    name: Core tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 12
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up Java 21
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Verify core (Linux)
+        if: runner.os == 'Linux'
+        run: ./mvnw --batch-mode --no-transfer-progress '-Dtest=AiSettingsTest,HistoryStoreTest,LocalInterpretationServiceTest,OllamaServiceTest,RandomEngineTest,ReleaseRefinementTest,TarotServiceTest' verify
+      - name: Verify core (Windows)
+        if: runner.os == 'Windows'
+        run: .\mvnw.cmd --batch-mode --no-transfer-progress '-Dtest=AiSettingsTest,HistoryStoreTest,LocalInterpretationServiceTest,OllamaServiceTest,RandomEngineTest,ReleaseRefinementTest,TarotServiceTest' verify
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: test-reports-${{ matrix.os }}
+          path: target/surefire-reports/
+          if-no-files-found: ignore

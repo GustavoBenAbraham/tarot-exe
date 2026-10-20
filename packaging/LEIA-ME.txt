@@ -1,0 +1,26 @@
+TAROT.EXE - GABINETE DOS ARCANOS
+Versao 0.2.0 - Windows 10/11, 64 bits
+
+Abra Tarot.exe. Java ja esta incluido: nao precisa instalar Java, Maven ou Eclipse.
+
+Digite uma pergunta, escolha o tema e sorteie as cartas.
+As cartas ficam a esquerda; leitura local e IA ficam em abas a direita.
+Arraste a divisoria para ajustar as colunas. Clique em uma carta para ampliar.
+A+ e A- ajustam o texto. F11 alterna tela cheia; Esc retorna.
+Salvar tiragem guarda a leitura no Historico. Copiar e Exportar .txt ajudam a compartilhar.
+
+IA e opcional. Para usa-la, instale e abra Ollama separadamente e baixe qwen2.5:3b.
+Clique em Aprofundar com IA. Voce pode cancelar e continuar usando a leitura local.
+O modelo de IA nao esta incluido neste instalador. As imagens e leituras locais funcionam offline.
+
+Dados pessoais: %USERPROFILE%\.tarot-exe
+Historico: history
+Parametros de IA: ai.properties
+Janela e fonte: window.properties
+Diagnostico de erros: logs
+
+Copie a pasta .tarot-exe para fazer backup, com o aplicativo fechado.
+Desinstalar o programa nao apaga o historico nem os modelos do Ollama.
+
+Versao portatil: extraia o ZIP inteiro antes de executar. Mantenha as pastas app e runtime juntas.
+Leituras simbolicas para reflexao, sem promessa de previsao de acontecimentos.
