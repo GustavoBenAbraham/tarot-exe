@@ -40,7 +40,7 @@ class TarotServiceTest {
         String text = service.interpret(reading);
         assertTrue(text.contains("Pergunta: Como seguir?"));
         assertTrue(text.contains(reading.cards().getFirst().card().name()));
-        assertTrue(text.contains(reading.cards().getFirst().card().meaning()));
+        assertTrue(text.contains(new com.tarotexe.service.LocalCardCatalog().detail(reading.cards().getFirst().card().id()).upright()));
         assertTrue(text.contains("SÍNTESE"));
     }
 
@@ -51,7 +51,8 @@ class TarotServiceTest {
         for (var drawn : reading.cards()) {
             assertTrue(text.contains(drawn.position()));
             assertTrue(text.contains(drawn.card().name()));
-            assertTrue(text.contains(drawn.reversed() ? drawn.card().shadow() : drawn.card().meaning()));
+            var detail = new com.tarotexe.service.LocalCardCatalog().detail(drawn.card().id());
+            assertTrue(text.contains(drawn.reversed() ? detail.reversed() : detail.upright()));
         }
     }
 

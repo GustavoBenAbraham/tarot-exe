@@ -73,3 +73,7 @@ Os testes verificam cobertura das 78 cartas, campos presentes, textos normais
 distintos e contextos dos quatro temas. Eles não avaliam a qualidade editorial:
 revise se a leitura ficou clara, útil e coerente. IDs duplicados são rejeitados
 pelo validador, assim como campos vazios, ausentes ou extras.
+
+## Referência incorporada
+
+O catálogo foi revisado a partir do PDF de Rachel Pollack fornecido para estudo. Consulte [REFERENCIA-LEITURAS.md](docs/REFERENCIA-LEITURAS.md) para páginas e critérios. Prefira esse catálogo às palavras-chave genéricas do domínio ao compor respostas: algumas inversões representam abertura ou liberação, e um rótulo negativo pode contradizer a leitura estudada.

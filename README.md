@@ -23,3 +23,7 @@ Imagens locais com ampliação, histórico, exportação UTF-8, copiar leitura e
 Consulte [as fórmulas](docs/PROBABILIDADES.md), [as prioridades](PENDENCIAS.md) e [a instalação](INSTALACAO.md). Os binários antigos em dist e releases anteriores precisam ser reconstruídos para incorporar as alterações.
 
 Ilustrações: Pamela Colman Smith, Rider–Waite–Smith (1909). [Créditos](src/main/resources/cards/ATTRIBUTION.md). Leituras simbólicas para reflexão; as probabilidades descrevem o sorteio, sem medir chances de acontecimentos da vida.
+
+## Referência de estudo atual
+
+As interpretações foram revisadas com base no PDF de *78 Graus de Sabedoria*, de Rachel Pollack, fornecido pelo usuário. O [mapa de referência](docs/REFERENCIA-LEITURAS.md) documenta páginas, critérios de adaptação e limites. As respostas continuam sendo compostas por textos e regras locais.

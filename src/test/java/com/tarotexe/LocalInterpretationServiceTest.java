@@ -95,13 +95,45 @@ class LocalInterpretationServiceTest {
         assertFalse(text.contains("As inversões se repetem"));
     }
 
-    @Test void reversedCardUsesShadowInsteadOfUprightMeaning() {
+    @Test void reversedCardUsesStudiedMeaningThroughoutReading() {
         var card = new TarotCard(0, "O Louco", "Arcano Maior", "começos e liberdade", "impulsividade");
         var reading = new Reading("", SpreadType.ONE,
                 List.of(new DrawnCard(card, true, "Orientação")), LocalDateTime.now());
         String text = new LocalInterpretationService().interpret(reading);
         assertTrue(text.contains("O Louco (Invertida)"));
-        assertTrue(text.contains("Tema: impulsividade."));
+        assertTrue(text.contains(new LocalCardCatalog().detail(0).reversed()));
+        assertFalse(text.contains("Tema: impulsividade."));
         assertFalse(text.contains("começos e liberdade"));
+    }
+
+    @Test void releasingReversalsDoNotReceiveContradictoryGenericShadow() {
+        var deck = TarotDeck.standard();
+        for (int id : new int[]{15, 39, 42, 57}) {
+            var reading = new Reading("", SpreadType.ONE,
+                    List.of(new DrawnCard(deck.get(id), true, "Orientação")), LocalDateTime.now());
+            String text = new LocalInterpretationService().interpret(reading);
+            assertTrue(text.contains(new LocalCardCatalog().detail(id).reversed()));
+            assertFalse(text.contains(deck.get(id).shadow()));
+            assertTrue(text.contains("Rachel Pollack"));
+            assertTrue(text.contains(com.tarotexe.service.StudyReference.pages(id)));
+        }
+    }
+
+    @Test void courtCardsAreNotAssignedToGenderOrSpecificPerson() {
+        var deck = TarotDeck.standard();
+        var reading = new Reading("", SpreadType.THREE, List.of(
+                new DrawnCard(deck.get(48), false, "Situação"),
+                new DrawnCard(deck.get(60), true, "Desafio"),
+                new DrawnCard(deck.get(77), false, "Conselho")), LocalDateTime.now());
+        assertTrue(new LocalInterpretationService().interpret(reading).contains("não definem gênero, idade ou identidade"));
+    }
+
+    @Test void referenceCoversAllCardsAndRejectsUnknownIds() {
+        for (int id = 0; id < 78; id++)
+            assertTrue(com.tarotexe.service.StudyReference.pages(id).matches("\\d+–\\d+"));
+        assertEquals("20–25", com.tarotexe.service.StudyReference.pages(0));
+        assertEquals("107–110", com.tarotexe.service.StudyReference.pages(21));
+        assertEquals("126–140", com.tarotexe.service.StudyReference.pages(42));
+        assertThrows(IllegalArgumentException.class, () -> com.tarotexe.service.StudyReference.pages(78));
     }
 }
