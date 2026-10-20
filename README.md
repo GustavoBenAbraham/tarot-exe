@@ -21,7 +21,7 @@ Imagens locais com ampliação, histórico, exportação UTF-8, copiar leitura e
 
 Consulte [as fórmulas](docs/PROBABILIDADES.md), [as prioridades](PENDENCIAS.md) e [a instalação](INSTALACAO.md). Os binários antigos em dist e releases anteriores precisam ser reconstruídos para incorporar as alterações.
 
-Ilustrações: Pamela Colman Smith, Rider–Waite–Smith (1909). [Créditos](src/main/resources/cards/ATTRIBUTION.md). Leituras simbólicas para reflexão; as probabilidades descrevem o sorteio, sem medir chances de acontecimentos da vida.
+Ilustrações: Pamela Colman Smith, Rider–Waite–Smith (1909). [Créditos](src/main/resources/cards/ATTRIBUTION.md).
 
 ## Referência de estudo atual
 
@@ -31,4 +31,4 @@ Todas as novas tiragens usam leitura geral, sem seletor de tema ou controle para
 
 ## Animação do baralho
 
-Ao sortear, um monte de cartas com verso azul pontilhado é embaralhado, distribuído e revelado uma carta por vez. A animação usa desenho e movimentos locais no estilo de utilitários do fim dos anos 90. Mostrar cartas pula a sequência; Nova tiragem cancela. O resultado é sorteado uma única vez antes da apresentação e não muda ao pular a animação.
+Ao sortear, um monte de cartas com verso azul pontilhado é embaralhado, distribuído e revelado uma carta por vez. A animação usa desenho e movimentos locais no estilo de utilitários do fim dos anos 90. A sequência dura cerca de 2,6 segundos para uma carta e 4,5 segundos para três. Mostrar cartas pula a sequência; Nova tiragem cancela. O resultado é sorteado uma única vez antes da apresentação e não muda ao pular a animação.

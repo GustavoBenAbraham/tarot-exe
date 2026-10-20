@@ -28,7 +28,7 @@ class TarotAppTest {
                 assertTrue(area.getText().isEmpty());
                 assertTrue(((Button) root.lookup("#skipAnimation")).isVisible());
             });
-            assertTrue(completed.await(8, TimeUnit.SECONDS), "Animation did not complete");
+            assertTrue(completed.await(12, TimeUnit.SECONDS), "Animation did not complete");
             onFx(() -> {
                 var root = stage.get().getScene().getRoot();
                 assertFalse(((Button) root.lookup("#draw")).isDisabled());
@@ -50,10 +50,10 @@ class TarotAppTest {
                 ((Button) root.lookup("#clear")).fire();
                 // Even attempting to skip after cancellation must not restore the discarded draw.
                 ((Button) root.lookup("#skipAnimation")).fire();
-                var wait = new javafx.animation.PauseTransition(javafx.util.Duration.seconds(3));
+                var wait = new javafx.animation.PauseTransition(javafx.util.Duration.seconds(5.5));
                 wait.setOnFinished(e -> settled.countDown()); wait.play();
             });
-            assertTrue(settled.await(6, TimeUnit.SECONDS));
+            assertTrue(settled.await(9, TimeUnit.SECONDS));
             onFx(() -> {
                 var root = stage.get().getScene().getRoot();
                 assertTrue(((Pane) root.lookup("#cards")).getChildren().isEmpty());

@@ -33,7 +33,7 @@ final class DrawAnimation {
                 values.add(new KeyValue(layers.get(i).translateXProperty(), offset, Interpolator.LINEAR));
                 values.add(new KeyValue(layers.get(i).translateYProperty(), -i * 3 + (step % 2) * 5, Interpolator.LINEAR));
             }
-            shuffle.getKeyFrames().add(new KeyFrame(Duration.millis(step * 115), values.toArray(KeyValue[]::new)));
+            shuffle.getKeyFrames().add(new KeyFrame(Duration.millis(step * 200), values.toArray(KeyValue[]::new)));
         }
         var holders = new ArrayList<StackPane>();
         for (int i = 0; i < faces.size(); i++) {
@@ -45,13 +45,13 @@ final class DrawAnimation {
         sequence = new SequentialTransition(shuffle);
         for (int i = 0; i < holders.size(); i++) {
             var holder = holders.get(i); Node face = faces.get(i);
-            var deal = new Timeline(new KeyFrame(Duration.millis(180),
+            var deal = new Timeline(new KeyFrame(Duration.millis(280),
                     new KeyValue(holder.translateYProperty(), 0, Interpolator.LINEAR),
                     new KeyValue(holder.opacityProperty(), 1, Interpolator.LINEAR)));
-            var close = new ScaleTransition(Duration.millis(140), holder); close.setFromX(1); close.setToX(0);
+            var close = new ScaleTransition(Duration.millis(240), holder); close.setFromX(1); close.setToX(0);
             close.setOnFinished(e -> holder.getChildren().setAll(face));
-            var open = new ScaleTransition(Duration.millis(140), holder); open.setFromX(0); open.setToX(1);
-            sequence.getChildren().addAll(deal, new PauseTransition(Duration.millis(100)), close, open);
+            var open = new ScaleTransition(Duration.millis(240), holder); open.setFromX(0); open.setToX(1);
+            sequence.getChildren().addAll(deal, new PauseTransition(Duration.millis(200)), close, open);
         }
         sequence.setOnFinished(e -> finish()); sequence.play();
     }

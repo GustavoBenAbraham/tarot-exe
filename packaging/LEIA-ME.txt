@@ -18,5 +18,4 @@ Diagnostico de erros: logs
 Copie a pasta .tarot-exe para fazer backup, com o aplicativo fechado.
 
 Versao portatil: extraia o ZIP inteiro antes de executar. Mantenha as pastas app e runtime juntas.
-Leituras simbolicas para reflexao, sem promessa de previsao de acontecimentos.
 Sorteios, imagens e leituras funcionam inteiramente de forma local.

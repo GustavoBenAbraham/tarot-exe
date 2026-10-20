@@ -8,7 +8,7 @@ public final class LocalInterpretationService implements InterpretationService {
     @Override public String interpret(Reading reading) {
         StringBuilder text = new StringBuilder();
         if (!reading.question().isBlank()) text.append("Pergunta: ").append(reading.question()).append("\n\n");
-        text.append("LEITURA SIMBÓLICA • ").append(reading.type().label()).append("\n\n");
+        text.append("LEITURA • ").append(reading.type().label()).append("\n\n");
         text.append("FOCO: ").append(reading.theme()).append("\n\n");
         for (DrawnCard drawn : reading.cards()) {
             text.append(drawn.position()).append(" | ").append(drawn.card().name()).append(" (").append(drawn.orientation()).append(")\n");
@@ -54,7 +54,6 @@ public final class LocalInterpretationService implements InterpretationService {
             text.append("\nSobre as invertidas: a orientação pode bloquear, redirecionar ou liberar a qualidade da carta. Compare as possibilidades com sua experiência e com as outras posições.\n");
         text.append("\nPRÓXIMO PASSO\n").append(catalog.detail(advice.card().id()).action())
             .append(" Depois, registre o que observou e o que deseja ajustar.\n\n")
-            .append("Leitura simbólica e reflexiva, composta por textos e regras locais. A pergunta orienta sua reflexão; o aplicativo não interpreta livremente seu conteúdo nem prevê acontecimentos.\n\n")
             .append(StudyReference.describe(reading));
         return text.toString();
     }
