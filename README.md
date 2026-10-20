@@ -32,3 +32,9 @@ Todas as novas tiragens usam leitura geral, sem seletor de tema ou controle para
 ## Animação do baralho
 
 Ao sortear, um monte de cartas com verso azul pontilhado é embaralhado, distribuído e revelado uma carta por vez. A animação usa desenho e movimentos locais no estilo de utilitários do fim dos anos 90. A sequência dura cerca de 2,6 segundos para uma carta e 4,5 segundos para três. Mostrar cartas pula a sequência; Nova tiragem cancela. O resultado é sorteado uma única vez antes da apresentação e não muda ao pular a animação.
+
+## Consulta pessoal
+
+Sua apresentação (opcional) permite informar nome ou apelido, nascimento, local e signo. A preparação e a leitura usam o nome; o signo informado acrescenta um contexto ao conselho. Os dados são locais e só entram no histórico ao salvar a consulta. Data, horário e local ainda não calculam signo ou ascendente.
+
+Veja a [estrutura da consulta](docs/CONSULTA.md), incluindo a próxima etapa de corte e escolha de cartas fechadas.

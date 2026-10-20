@@ -20,6 +20,7 @@ public final class TarotApp extends Application {
     private final Button copy = new Button("Copiar leitura");
     private final javafx.beans.property.IntegerProperty readingFontSize = new javafx.beans.property.SimpleIntegerProperty(15);
     private Reading currentReading;
+    private ConsultantProfile consultant = ConsultantProfile.empty();
     private boolean currentAllowReversed;
     private final Button save = new Button("Salvar tiragem");
     public TarotApp() { this(HistoryStore.local()); }
@@ -44,6 +45,16 @@ public final class TarotApp extends Application {
         question.setPromptText("Sua pergunta (opcional, até 500 caracteres)");
         Button draw = new Button("Embaralhar e tirar cartas"); draw.setDefaultButton(true);
         Button clear = new Button("Nova tiragem");
+        Button presentation = new Button("Sua apresentação (opcional)"); presentation.setId("presentation");
+        presentation.disableProperty().bind(animating);
+        Label preparation = new Label("Pense no que deseja consultar. Escreva sua pergunta e embaralhe quando estiver pronto.");
+        preparation.setWrapText(true); preparation.setId("preparation");
+        presentation.setOnAction(e -> ConsultationDialog.show(stage, consultant).ifPresent(profile -> {
+            consultant = profile;
+            preparation.setText((profile.name().isBlank() ? "" : profile.name() + ", ")
+                    + "reserve um momento para sua pergunta. Quando estiver pronto, embaralhe as cartas.");
+            question.requestFocus();
+        }));
         Button skip = new Button("Mostrar cartas"); skip.setId("skipAnimation");
         skip.visibleProperty().bind(animating); skip.managedProperty().bind(animating);
         skip.setOnAction(e -> drawAnimation.finish());
@@ -66,6 +77,9 @@ public final class TarotApp extends Application {
         Button historyButton = new Button("Histórico"); historyButton.setId("history");
         historyButton.setOnAction(e -> HistoryWindow.show(stage, history, entry -> {
             drawAnimation.cancel(); animating.set(false);
+            consultant = entry.reading().profile();
+            preparation.setText((consultant.name().isBlank() ? "" : consultant.name() + ", ")
+                    + "reserve um momento para sua pergunta. Quando estiver pronto, embaralhe as cartas.");
             currentAllowReversed = entry.allowReversed();
             spread.setValue(entry.reading().type());
             question.setText(entry.reading().question()); display(entry.reading(), entry.interpretation());
@@ -100,7 +114,7 @@ public final class TarotApp extends Application {
         settings.getChildren().addAll(draw, clear, save, historyButton, skip);
         Region questionSpacer = new Region(); HBox.setHgrow(questionSpacer, Priority.ALWAYS);
         HBox questionHeader = new HBox(new Label("PERGUNTA"), questionSpacer, questionCount);
-        VBox controls = new VBox(8, questionHeader, question, questionError, settings); controls.getStyleClass().add("panel");
+        VBox controls = new VBox(8, presentation, preparation, questionHeader, question, questionError, settings); controls.getStyleClass().add("panel");
 
         draw.getStyleClass().add("primary-button");
         cards.setAlignment(Pos.TOP_CENTER); cards.setTileAlignment(Pos.TOP_CENTER); cards.setPrefColumns(3); cards.setMinWidth(0); cards.setPadding(new Insets(12));
@@ -128,7 +142,7 @@ public final class TarotApp extends Application {
         body.setPadding(new Insets(12)); status.getStyleClass().add("status"); status.setWrapText(true);
         draw.setOnAction(e -> {
             try {
-                Reading reading = tarot.draw(question.getText(), spread.getValue());
+                Reading reading = tarot.draw(question.getText(), spread.getValue(), consultant);
                 String text = tarot.interpret(reading);
                 currentReading = null; save.setDisable(true); export.setDisable(true); copy.setDisable(true);
                 interpretation.clear(); animating.set(true); scroll.setVvalue(0);

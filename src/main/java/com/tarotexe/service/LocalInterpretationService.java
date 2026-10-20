@@ -7,6 +7,7 @@ public final class LocalInterpretationService implements InterpretationService {
     private final LocalContextCatalog contexts = new LocalContextCatalog();
     @Override public String interpret(Reading reading) {
         StringBuilder text = new StringBuilder();
+        if (!reading.profile().name().isBlank()) text.append("Consulta de ").append(reading.profile().name()).append("\n\n");
         if (!reading.question().isBlank()) text.append("Pergunta: ").append(reading.question()).append("\n\n");
         text.append("LEITURA • ").append(reading.type().label()).append("\n\n");
         text.append("FOCO: ").append(reading.theme()).append("\n\n");
@@ -52,6 +53,13 @@ public final class LocalInterpretationService implements InterpretationService {
         }
         if (reading.cards().stream().anyMatch(DrawnCard::reversed))
             text.append("\nSobre as invertidas: a orientação pode bloquear, redirecionar ou liberar a qualidade da carta. Compare as possibilidades com sua experiência e com as outras posições.\n");
+        if (reading.profile().sign() != null) {
+            var sign = reading.profile().sign();
+            text.append("\nCONTEXTO ASTROLÓGICO\n").append(sign).append(" — ").append(sign.focus()).append(". ")
+                .append(sign.question()).append("\n")
+                .append("Relacione essa pergunta ao conselho de ").append(advice.card().name())
+                .append(". O signo informado não altera as cartas sorteadas.\n");
+        }
         text.append("\nPRÓXIMO PASSO\n").append(catalog.detail(advice.card().id()).action())
             .append(" Depois, registre o que observou e o que deseja ajustar.\n\n")
             .append(StudyReference.describe(reading));

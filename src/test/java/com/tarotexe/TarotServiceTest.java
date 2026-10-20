@@ -9,6 +9,28 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TarotServiceTest {
+    @Test void profilePersonalizesReadingWithoutChangingRandomDraw() {
+        var profile = new com.tarotexe.domain.ConsultantProfile("Ana", java.time.LocalDate.of(1994, 7, 12),
+                java.time.LocalTime.of(9, 30), "São Paulo, Brasil", com.tarotexe.domain.ZodiacSign.CANCER);
+        java.util.function.Supplier<TarotService> deterministic = () -> new TarotService(new RandomEngine(new java.security.SecureRandom() {
+            @Override public int nextInt(int bound) { return 0; }
+            @Override public boolean nextBoolean() { return true; }
+        }), new LocalInterpretationService());
+        var anonymous = deterministic.get().draw("Como seguir?", SpreadType.THREE);
+        var personal = deterministic.get().draw("Como seguir?", SpreadType.THREE, profile);
+        assertEquals(anonymous.cards(), personal.cards());
+        String text = deterministic.get().interpret(personal);
+        assertTrue(text.contains("Consulta de Ana"));
+        assertTrue(text.contains("Câncer"));
+        assertTrue(text.contains(profile.sign().question()));
+        assertFalse(deterministic.get().interpret(anonymous).contains("CONTEXTO ASTROLÓGICO"));
+    }
+
+    @Test void optionalProfileValidatesBoundsAndTimeRequiresDate() {
+        assertThrows(IllegalArgumentException.class, () -> new com.tarotexe.domain.ConsultantProfile("a".repeat(81), null, null, "", null));
+        assertThrows(IllegalArgumentException.class, () -> new com.tarotexe.domain.ConsultantProfile("", null, java.time.LocalTime.NOON, "", null));
+        assertEquals("Ana", new com.tarotexe.domain.ConsultantProfile(" Ana ", null, null, "", null).name());
+    }
     private final TarotService service = new TarotService(new RandomEngine(), new LocalInterpretationService());
 
     @Test void defaultDrawAlwaysAllowsReversedCardsAndUsesGeneralTheme() {

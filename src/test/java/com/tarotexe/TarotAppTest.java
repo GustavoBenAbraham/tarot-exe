@@ -13,6 +13,46 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /** Requires a graphical desktop; actions run on the real JavaFX application thread. */
 class TarotAppTest {
+    @Test void presentationValidatesBirthDateAndPersonalizesSavedConsultation() throws Exception {
+        onFx(() -> {
+            var stage = new Stage();
+            var store = new com.tarotexe.service.HistoryStore(historyFolder);
+            var failure = new java.util.concurrent.atomic.AtomicReference<Throwable>();
+            try {
+                new TarotApp(store).start(stage); var root = stage.getScene().getRoot();
+                Platform.runLater(() -> {
+                    Stage dialogStage = (Stage) javafx.stage.Window.getWindows().stream()
+                            .filter(w -> w instanceof Stage s && s.getTitle().equals("Sua apresentação")).findFirst().orElseThrow();
+                    try {
+                        var form = dialogStage.getScene();
+                        ((TextField) form.lookup("#consultantName")).setText("Ana");
+                        ((TextField) form.lookup("#birthDate")).setText("31/02/2000");
+                        ((Button) form.lookup("#profileContinue")).fire();
+                        assertTrue(dialogStage.isShowing());
+                        assertFalse(((Label) form.lookup("#profileError")).getText().isBlank());
+                        ((TextField) form.lookup("#birthDate")).setText(java.time.LocalDate.now(java.time.ZoneId.of("America/Sao_Paulo"))
+                                .plusDays(1).format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/uuuu")));
+                        ((Button) form.lookup("#profileContinue")).fire();
+                        assertTrue(((Label) form.lookup("#profileError")).getText().contains("futuro"));
+                        ((TextField) form.lookup("#birthDate")).setText("12/07/1994");
+                        ((TextField) form.lookup("#birthTime")).setText("09:30");
+                        @SuppressWarnings("unchecked")
+                        var sign = (ComboBox<com.tarotexe.domain.ZodiacSign>) form.lookup("#consultantSign");
+                        sign.setValue(com.tarotexe.domain.ZodiacSign.CANCER);
+                        ((Button) form.lookup("#profileContinue")).fire();
+                    } catch (Throwable ex) { failure.set(ex); dialogStage.close(); }
+                });
+                ((Button) root.lookup("#presentation")).fire();
+                if (failure.get() != null) throw new AssertionError(failure.get());
+                assertTrue(((Label) root.lookup("#preparation")).getText().contains("Ana"));
+                drawAndFinish((Button) root.lookup("#draw"));
+                assertTrue(((TextArea) root.lookup("#interpretation")).getText().contains("Consulta de Ana"));
+                ((Button) root.lookup("#saveReading")).fire();
+                try { assertEquals("Ana", store.list().entries().getFirst().reading().profile().name()); }
+                catch (java.io.IOException ex) { throw new AssertionError(ex); }
+            } finally { stage.close(); }
+        });
+    }
     @Test void animationCompletesAndReleasesReadingWithoutSkipping() throws Exception {
         var stage = new java.util.concurrent.atomic.AtomicReference<Stage>();
         var completed = new CountDownLatch(1);

@@ -10,6 +10,19 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class HistoryStoreTest {
+    @Test void consultationProfileRoundTripsWithSavedReading() throws Exception {
+        var original = reading(LocalDateTime.now());
+        var profile = new ConsultantProfile("João", java.time.LocalDate.of(1988, 2, 29), java.time.LocalTime.of(23, 15), "Recife, Brasil", ZodiacSign.PISCES);
+        var personal = new Reading(original.question(), original.type(), original.cards(), original.createdAt(), original.theme(), profile);
+        var store = new HistoryStore(temp);
+        var saved = store.save(personal, "Texto da consulta", true);
+        assertEquals(saved, new HistoryStore(temp).list().entries().getFirst());
+        var file = temp.resolve(saved.id() + ".properties");
+        String legacy = Files.readString(file).replaceAll("(?m)^profile\\.[^\\r\\n]*\\R?", "");
+        Files.writeString(file, legacy);
+        assertEquals(ConsultantProfile.empty(), store.list().entries().getFirst().reading().profile());
+        assertEquals(legacy, Files.readString(file));
+    }
     @Test void readsLegacyHistoryWithoutChangingOriginalFile() throws Exception {
         var store = new HistoryStore(temp);
         var saved = store.save(reading(LocalDateTime.now()), "Texto local", true);

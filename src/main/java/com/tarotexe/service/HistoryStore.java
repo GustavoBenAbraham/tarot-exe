@@ -32,6 +32,12 @@ public final class HistoryStore {
         data.setProperty("createdAt", reading.createdAt().toString());
         data.setProperty("interpretation", interpretation);
         data.setProperty("allowReversed", Boolean.toString(allowReversed));
+        var profile = reading.profile();
+        data.setProperty("profile.name", profile.name());
+        data.setProperty("profile.birthDate", profile.birthDate() == null ? "" : profile.birthDate().toString());
+        data.setProperty("profile.birthTime", profile.birthTime() == null ? "" : profile.birthTime().toString());
+        data.setProperty("profile.birthCity", profile.birthCity());
+        data.setProperty("profile.sign", profile.sign() == null ? "" : profile.sign().name());
         for (int i = 0; i < reading.cards().size(); i++) {
             data.setProperty("card." + i + ".id", Integer.toString(reading.cards().get(i).card().id()));
             data.setProperty("card." + i + ".reversed", Boolean.toString(reading.cards().get(i).reversed()));
@@ -90,7 +96,14 @@ public final class HistoryStore {
             if (reversed && !allowReversed) throw new IllegalArgumentException("Inversão inconsistente");
             cards.add(new DrawnCard(deck.get(cardId), reversed, spread.position(i)));
         }
-        return new Entry(id, new Reading(question, spread, cards, createdAt, theme), required(p, "interpretation"), allowReversed);
+        String birthDate = p.getProperty("profile.birthDate", "");
+        String birthTime = p.getProperty("profile.birthTime", "");
+        String sign = p.getProperty("profile.sign", "");
+        var profile = new ConsultantProfile(p.getProperty("profile.name", ""),
+                birthDate.isEmpty() ? null : java.time.LocalDate.parse(birthDate),
+                birthTime.isEmpty() ? null : java.time.LocalTime.parse(birthTime),
+                p.getProperty("profile.birthCity", ""), sign.isEmpty() ? null : ZodiacSign.valueOf(sign));
+        return new Entry(id, new Reading(question, spread, cards, createdAt, theme, profile), required(p, "interpretation"), allowReversed);
     }
     private String required(Properties p, String key) {
         String value = p.getProperty(key);

@@ -11,6 +11,11 @@ public final class TarotService {
     public Reading draw(String question, SpreadType type) {
         return draw(question, type, true, ReadingTheme.GENERAL);
     }
+    public Reading draw(String question, SpreadType type, ConsultantProfile profile) {
+        java.util.Objects.requireNonNull(profile, "Perfil obrigatório");
+        var reading = draw(question, type);
+        return new Reading(reading.question(), reading.type(), reading.cards(), reading.createdAt(), reading.theme(), profile);
+    }
     public Reading draw(String question, SpreadType type, boolean allowReversed) {
         return draw(question, type, allowReversed, ReadingTheme.GENERAL);
     }
