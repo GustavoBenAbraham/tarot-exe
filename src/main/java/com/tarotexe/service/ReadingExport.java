@@ -8,11 +8,11 @@ import java.time.format.DateTimeFormatter;
 
 public final class ReadingExport {
     private ReadingExport() {}
-    public static String text(Reading reading, String local, String ai, String model) {
+    public static String text(Reading reading, String local) {
         String header = "TAROT.EXE · Gabinete dos Arcanos\n"
                 + reading.createdAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))
                 + " · " + reading.type() + " · " + reading.theme() + "\n\n";
-        return header + local + (ai.isBlank() ? "" : "\n\nAPROFUNDAMENTO COM IA LOCAL · " + model + "\n\n" + ai) + "\n";
+        return header + local + "\n";
     }
     public static void write(Path file, String text) throws IOException {
         Path absolute = file.toAbsolutePath();

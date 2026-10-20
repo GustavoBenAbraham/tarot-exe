@@ -47,5 +47,3 @@
 .tab-pane .tab { -fx-background-color: #d5cebc; -fx-background-radius: 0; -fx-border-color: #fff5df #817665 #817665 #fff5df; -fx-border-width: 1; -fx-padding: 5 12; }
 .tab-pane .tab:selected { -fx-background-color: #f7f0df; -fx-border-color: #643e46 #817665 #f7f0df #fff5df; -fx-border-width: 3 1 1 1; }
 .tab-pane .tab .tab-label { -fx-text-fill: #302d28; }
-.ai-status { -fx-font-size: 11px; -fx-text-fill: #594f42; -fx-padding: 2 4; }
-.ai-toolbar .button { -fx-font-size: 12px; -fx-padding: 5 8; }

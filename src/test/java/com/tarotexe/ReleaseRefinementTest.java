@@ -28,18 +28,17 @@ class ReleaseRefinementTest {
         }
         assertFalse(new LocalCardCatalog(new StringReader(source)).detail(0).action().isBlank());
     }
-    @Test void exportKeepsAccentsAndBothSourcesAndReplacesPreviousFile() throws Exception {
+    @Test void exportKeepsAccentsAndReplacesPreviousFile() throws Exception {
         var reading = new Reading("Reflexão?", SpreadType.ONE,
                 List.of(new DrawnCard(TarotDeck.standard().getFirst(), false, "Orientação")),
                 LocalDateTime.of(2026, 10, 20, 10, 15), ReadingTheme.GENERAL);
-        var text = ReadingExport.text(reading, "Pergunta: Reflexão?\nTexto local.", "Ação com IA.", "qwen2.5:3b");
+        var text = ReadingExport.text(reading, "Pergunta: Reflexão?\nTexto local.");
         var file = folder.resolve("leitura.txt"); Files.writeString(file, "versão anterior");
         ReadingExport.write(file, text);
         assertEquals(text, Files.readString(file, StandardCharsets.UTF_8));
         assertTrue(text.contains("20/10/2026 10:15"));
-        assertTrue(text.contains("Texto local.")); assertTrue(text.contains("Ação com IA."));
-        assertTrue(text.contains("qwen2.5:3b"));
-        assertFalse(ReadingExport.text(reading, "Local", "", "").contains("APROFUNDAMENTO"));
+        assertTrue(text.contains("Texto local."));
+        assertFalse(ReadingExport.text(reading, "Local").contains("APROFUNDAMENTO"));
         try (var entries = Files.list(folder)) { assertEquals(1, entries.count()); }
     }
     @Test void windowPreferencesRoundTripAndInvalidFilesArePreserved() throws Exception {

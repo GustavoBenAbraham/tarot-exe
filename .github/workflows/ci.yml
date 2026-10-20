@@ -34,10 +34,10 @@ jobs:
           cache: maven
       - name: Verify core (Linux)
         if: runner.os == 'Linux'
-        run: ./mvnw --batch-mode --no-transfer-progress '-Dtest=AiSettingsTest,HistoryStoreTest,LocalInterpretationServiceTest,OllamaServiceTest,RandomEngineTest,ReleaseRefinementTest,TarotServiceTest' verify
+        run: ./mvnw --batch-mode --no-transfer-progress '-Dtest=HistoryStoreTest,LocalInterpretationServiceTest,RandomEngineTest,ProbabilityModelTest,ReleaseRefinementTest,TarotServiceTest' verify
       - name: Verify core (Windows)
         if: runner.os == 'Windows'
-        run: .\mvnw.cmd --batch-mode --no-transfer-progress '-Dtest=AiSettingsTest,HistoryStoreTest,LocalInterpretationServiceTest,OllamaServiceTest,RandomEngineTest,ReleaseRefinementTest,TarotServiceTest' verify
+        run: .\mvnw.cmd --batch-mode --no-transfer-progress '-Dtest=HistoryStoreTest,LocalInterpretationServiceTest,RandomEngineTest,ProbabilityModelTest,ReleaseRefinementTest,TarotServiceTest' verify
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

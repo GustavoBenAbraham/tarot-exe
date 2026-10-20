@@ -1,3 +1,9 @@
+# Em desenvolvimento
+
+- Removida a integração com IA e sua dependência JSON.
+- Aba de probabilidades com contagens exatas e distribuições.
+- Históricos antigos continuam legíveis.
+
 # Changelog
 
 ## 0.2.0 — 20/10/2026

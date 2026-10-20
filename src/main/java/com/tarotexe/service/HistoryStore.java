@@ -9,8 +9,8 @@ import java.util.*;
 
 /** Um arquivo por leitura: escrita temporária e publicação por rename. */
 public final class HistoryStore {
-    public record Entry(UUID id, Reading reading, String interpretation, boolean allowReversed, String aiText, String aiModel) {
-        public String fullText() { return aiText.isBlank() ? interpretation : interpretation + "\n\nIA LOCAL · " + aiModel + "\n\n" + aiText; }
+    public record Entry(UUID id, Reading reading, String interpretation, boolean allowReversed) {
+        public String fullText() { return interpretation; }
     }
     public record Listing(List<Entry> entries, List<String> problems) {}
     private final Path directory;
@@ -22,19 +22,15 @@ public final class HistoryStore {
     public Path directory() { return directory; }
 
     public Entry save(Reading reading, String interpretation, boolean allowReversed) throws IOException {
-        return save(reading, interpretation, allowReversed, "", "");
-    }
-    public Entry save(Reading reading, String interpretation, boolean allowReversed, String aiText, String aiModel) throws IOException {
         Objects.requireNonNull(interpretation);
         UUID id = UUID.randomUUID();
-        var entry = new Entry(id, reading, interpretation, allowReversed, Objects.requireNonNull(aiText), Objects.requireNonNull(aiModel));
+        var entry = new Entry(id, reading, interpretation, allowReversed);
         var data = new Properties();
         data.setProperty("version", "1"); data.setProperty("id", id.toString());
         data.setProperty("question", reading.question());
         data.setProperty("spread", reading.type().name()); data.setProperty("theme", reading.theme().name());
         data.setProperty("createdAt", reading.createdAt().toString());
         data.setProperty("interpretation", interpretation);
-        data.setProperty("aiText", aiText); data.setProperty("aiModel", aiModel);
         data.setProperty("allowReversed", Boolean.toString(allowReversed));
         for (int i = 0; i < reading.cards().size(); i++) {
             data.setProperty("card." + i + ".id", Integer.toString(reading.cards().get(i).card().id()));
@@ -94,8 +90,7 @@ public final class HistoryStore {
             if (reversed && !allowReversed) throw new IllegalArgumentException("Inversão inconsistente");
             cards.add(new DrawnCard(deck.get(cardId), reversed, spread.position(i)));
         }
-        return new Entry(id, new Reading(question, spread, cards, createdAt, theme), required(p, "interpretation"), allowReversed,
-                p.getProperty("aiText", ""), p.getProperty("aiModel", ""));
+        return new Entry(id, new Reading(question, spread, cards, createdAt, theme), required(p, "interpretation"), allowReversed);
     }
     private String required(Properties p, String key) {
         String value = p.getProperty(key);

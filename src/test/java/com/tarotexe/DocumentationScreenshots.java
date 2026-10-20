@@ -30,8 +30,7 @@ class DocumentationScreenshots {
                         List.of(new DrawnCard(deck.get(1), false, "Situação"), new DrawnCard(deck.get(31), true, "Desafio"),
                                 new DrawnCard(deck.get(71), false, "Conselho")), LocalDateTime.of(2026, 10, 20, 10, 30), ReadingTheme.WORK);
                 var store = new HistoryStore(history);
-                store.save(reading, new LocalInterpretationService().interpret(reading), true,
-                        Files.readString(Path.of("docs/examples/ollama-reading.txt")), "qwen2.5:3b");
+                store.save(reading, new LocalInterpretationService().interpret(reading), true);
                 new TarotApp(store).start(stage);
                 var root = stage.getScene().getRoot();
                 ((Button) root.lookup("#history")).fire();
@@ -40,7 +39,7 @@ class DocumentationScreenshots {
                 ((Button) archive.getScene().lookup("#historyOpen")).fire();
                 capture(root, 1400, 900, "01-leitura-local.png");
                 var tabs = (TabPane) root.lookup("#readingTabs"); tabs.getSelectionModel().select(1);
-                capture(root, 1400, 900, "02-ia-local.png");
+                capture(root, 1400, 900, "02-probabilidades.png");
                 tabs.getSelectionModel().select(0);
                 var card = ((Pane) root.lookup("#cards")).getChildren().get(1);
                 card.getOnKeyPressed().handle(new javafx.scene.input.KeyEvent(javafx.scene.input.KeyEvent.KEY_PRESSED,
@@ -50,15 +49,6 @@ class DocumentationScreenshots {
                 ((Button) root.lookup("#history")).fire(); archive = findStage("Histórico de tiragens");
                 ((ListView<?>) archive.getScene().lookup("#historyList")).getSelectionModel().selectFirst();
                 capture(archive.getScene().getRoot(), 1120, 700, "04-historico.png"); archive.close();
-                var failure = new java.util.concurrent.atomic.AtomicReference<Throwable>();
-                Platform.runLater(() -> {
-                    try {
-                        var settings = findStage("Configurar IA local");
-                        capture(settings.getScene().getRoot(), 600, 490, "05-configuracao-ia.png"); settings.close();
-                    } catch (Throwable e) { failure.set(e); findStage("Configurar IA local").close(); }
-                });
-                ((Button) root.lookup("#aiConfigure")).fire();
-                if (failure.get() != null) throw new AssertionError(failure.get());
                 return null;
             } finally { stage.close(); }
         });

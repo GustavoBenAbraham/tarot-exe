@@ -10,16 +10,16 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class HistoryStoreTest {
-    @Test void preservesAiResponseSeparatelyAndReadsOlderFiles() throws Exception {
+    @Test void readsLegacyHistoryWithoutChangingOriginalFile() throws Exception {
         var store = new HistoryStore(temp);
-        var saved = store.save(reading(LocalDateTime.now()), "Texto local", true, "Reflexão com IA", "qwen2.5:3b");
-        assertEquals(saved, new HistoryStore(temp).list().entries().getFirst());
-        assertTrue(saved.fullText().contains("IA LOCAL · qwen2.5:3b"));
-        assertTrue(saved.fullText().contains("Reflexão com IA"));
+        var saved = store.save(reading(LocalDateTime.now()), "Texto local", true);
         var file = temp.resolve(saved.id() + ".properties");
-        Files.writeString(file, Files.readString(file).replaceAll("(?m)^ai(Text|Model)=.*\\R?", ""));
-        var older = store.list().entries().getFirst();
-        assertEquals("", older.aiText()); assertEquals("Texto local", older.fullText());
+        String legacy = Files.readString(file) + "\naiText=Texto antigo\naiModel=modelo-antigo\n";
+        Files.writeString(file, legacy);
+        assertEquals(saved, store.list().entries().getFirst());
+        assertEquals("Texto local", store.list().entries().getFirst().fullText());
+        assertEquals(legacy, Files.readString(file));
+        assertFalse(Files.readString(temp.resolve(store.save(saved.reading(), "Nova", true).id() + ".properties")).contains("aiText"));
     }
     @TempDir Path temp;
     private Reading reading(LocalDateTime time) {

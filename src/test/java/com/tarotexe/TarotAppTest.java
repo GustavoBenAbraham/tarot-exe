@@ -34,8 +34,14 @@ class TarotAppTest {
             var stage = new Stage();
             try {
                 new TarotApp().start(stage); var root = stage.getScene().getRoot();
+                assertNull(root.lookup("#aiDeepen"));
+                assertNull(root.lookup("#aiConfigure"));
                 assertTrue(((Button) root.lookup("#exportReading")).isDisabled());
                 ((Button) root.lookup("#draw")).fire();
+                var tabs = (TabPane) root.lookup("#readingTabs");
+                assertEquals("Probabilidades", tabs.getTabs().get(1).getText());
+                var probabilities = (TextArea) tabs.getTabs().get(1).getContent();
+                assertTrue(probabilities.getText().contains("3651648"));
                 assertFalse(((Button) root.lookup("#exportReading")).isDisabled());
                 assertFalse(((Button) root.lookup("#copyReading")).isDisabled());
                 ((Button) root.lookup("#largerText")).fire();
@@ -43,92 +49,11 @@ class TarotAppTest {
                 ((Button) root.lookup("#smallerText")).fire();
                 assertTrue(((TextArea) root.lookup("#interpretation")).getStyle().contains("15px"));
                 ((Button) root.lookup("#clear")).fire();
+                assertEquals("", probabilities.getText());
                 assertTrue(((Button) root.lookup("#exportReading")).isDisabled());
                 assertTrue(((Button) root.lookup("#copyReading")).isDisabled());
             } finally { stage.close(); }
         });
-    }
-    @Test void aiCompletesAsynchronouslyAndPersistsWithReading() throws Exception {
-        var pending = new java.util.concurrent.CompletableFuture<String>();
-        var stage = new java.util.concurrent.atomic.AtomicReference<Stage>();
-        var original = new java.util.concurrent.atomic.AtomicReference<String>();
-        var store = new com.tarotexe.service.HistoryStore(historyFolder);
-        try {
-            onFx(() -> {
-                var window = new Stage(); stage.set(window);
-                new TarotApp(store, (reading, settings) -> pending).start(window);
-                var root = window.getScene().getRoot();
-                assertTrue(((Button) root.lookup("#aiDeepen")).isDisabled());
-                ((Button) root.lookup("#draw")).fire();
-                original.set(((TextArea) root.lookup("#interpretation")).getText());
-                ((Button) root.lookup("#aiDeepen")).fire();
-                assertTrue(((Button) root.lookup("#aiDeepen")).isDisabled());
-                assertFalse(((Button) root.lookup("#aiCancel")).isDisabled());
-                assertFalse(((Button) root.lookup("#draw")).isDisabled());
-                assertEquals(original.get(), ((TextArea) root.lookup("#interpretation")).getText());
-            });
-            pending.complete("Uma reflexão local mais detalhada.");
-            onFx(() -> {
-                var root = stage.get().getScene().getRoot();
-                assertEquals("Uma reflexão local mais detalhada.", ((TextArea) root.lookup("#aiResponse")).getText());
-                assertEquals(original.get(), ((TextArea) root.lookup("#interpretation")).getText());
-                assertTrue(((Button) root.lookup("#aiCancel")).isDisabled());
-                ((Button) root.lookup("#saveReading")).fire();
-            });
-            var entry = store.list().entries().getFirst();
-            assertEquals("Uma reflexão local mais detalhada.", entry.aiText());
-            assertEquals(original.get(), entry.interpretation());
-        } finally { onFx(() -> { if (stage.get() != null) stage.get().close(); }); }
-    }
-
-    @Test void obsoleteAiResponseDoesNotOverwriteNewDrawAndCancelAllowsRetry() throws Exception {
-        // Deliberately non-cancellable fake simulates a provider returning after cancellation.
-        var obsolete = new java.util.concurrent.CompletableFuture<String>() {
-            @Override public boolean cancel(boolean interrupt) { return false; }
-        };
-        var second = new java.util.concurrent.CompletableFuture<String>();
-        var calls = new java.util.concurrent.atomic.AtomicInteger();
-        var stage = new java.util.concurrent.atomic.AtomicReference<Stage>();
-        try {
-            onFx(() -> {
-                var window = new Stage(); stage.set(window);
-                new TarotApp(new com.tarotexe.service.HistoryStore(historyFolder),
-                        (reading, settings) -> calls.getAndIncrement() == 0 ? obsolete : second).start(window);
-                var root = window.getScene().getRoot();
-                ((Button) root.lookup("#draw")).fire(); ((Button) root.lookup("#aiDeepen")).fire();
-                ((Button) root.lookup("#draw")).fire();
-            });
-            obsolete.complete("Resposta antiga que deve ser ignorada");
-            onFx(() -> {
-                var root = stage.get().getScene().getRoot();
-                assertEquals("", ((TextArea) root.lookup("#aiResponse")).getText());
-                ((Button) root.lookup("#aiDeepen")).fire();
-                ((Button) root.lookup("#aiCancel")).fire();
-                assertTrue(second.isCancelled());
-                assertFalse(((Button) root.lookup("#aiDeepen")).isDisabled());
-                assertTrue(((Label) root.lookup("#aiStatus")).getText().contains("cancelada"));
-            });
-        } finally { onFx(() -> { if (stage.get() != null) stage.get().close(); }); }
-    }
-
-    @Test void aiFailureKeepsLocalReadingAndOffersRetry() throws Exception {
-        var pending = new java.util.concurrent.CompletableFuture<String>();
-        var stage = new java.util.concurrent.atomic.AtomicReference<Stage>();
-        try {
-            onFx(() -> {
-                var window = new Stage(); stage.set(window);
-                new TarotApp(new com.tarotexe.service.HistoryStore(historyFolder), (reading, settings) -> pending).start(window);
-                var root = window.getScene().getRoot();
-                ((Button) root.lookup("#draw")).fire(); ((Button) root.lookup("#aiDeepen")).fire();
-            });
-            pending.completeExceptionally(new java.net.http.HttpTimeoutException("timeout"));
-            onFx(() -> {
-                var root = stage.get().getScene().getRoot();
-                assertTrue(((Label) root.lookup("#aiStatus")).getText().contains("Tempo limite"));
-                assertFalse(((Button) root.lookup("#aiDeepen")).isDisabled());
-                assertTrue(((TextArea) root.lookup("#interpretation")).getText().contains("PRÓXIMO PASSO"));
-            });
-        } finally { onFx(() -> { if (stage.get() != null) stage.get().close(); }); }
     }
     @Test void cardsStayLargeAndOpenOriginalImageInResizableWindow() throws Exception {
         onFx(() -> {

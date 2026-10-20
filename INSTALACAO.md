@@ -18,14 +18,14 @@ Não execute de dentro do ZIP.
 ## Dados e atualizações
 
 - Histórico, parâmetros, fonte e preferências ficam em `%USERPROFILE%\.tarot-exe`.
-- Desinstalar ou reinstalar preserva essa pasta e os modelos do Ollama.
+- Desinstalar ou reinstalar preserva essa pasta.
 - Faça backup dessa pasta com o aplicativo fechado.
 - Logs de diagnóstico ficam em `.tarot-exe/logs`, com rotação para limitar o tamanho.
 - Atualizações devem manter o AppId do instalador e a compatibilidade dos dados.
 
 Leituras do catálogo e imagens estão incluídas e funcionam offline.
-Ollama e o modelo `qwen2.5:3b` são opcionais e instalados separadamente;
-o instalador não baixa modelos automaticamente.
+O aplicativo atual funciona inteiramente de forma local, sem modelos externos.
+Binários antigos em dist precisam ser reconstruídos.
 
 ## Construir outra versão
 
