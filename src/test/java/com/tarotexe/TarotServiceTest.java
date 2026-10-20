@@ -11,6 +11,19 @@ import static org.junit.jupiter.api.Assertions.*;
 class TarotServiceTest {
     private final TarotService service = new TarotService(new RandomEngine(), new LocalInterpretationService());
 
+    @Test void defaultDrawAlwaysAllowsReversedCardsAndUsesGeneralTheme() {
+        var random = new java.security.SecureRandom() {
+            @Override public boolean nextBoolean() { return true; }
+        };
+        var tarot = new TarotService(new RandomEngine(random), new LocalInterpretationService());
+        for (var type : SpreadType.values()) {
+            var reading = tarot.draw("", type);
+            assertEquals(type.size(), reading.cards().size());
+            assertTrue(reading.cards().stream().allMatch(com.tarotexe.domain.DrawnCard::reversed));
+            assertEquals(com.tarotexe.domain.ReadingTheme.GENERAL, reading.theme());
+        }
+    }
+
     @Test void nullQuestionBecomesEmpty() {
         assertEquals("", service.draw(null, SpreadType.ONE, false).question());
     }

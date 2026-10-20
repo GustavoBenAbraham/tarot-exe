@@ -8,6 +8,9 @@ public final class TarotService {
     private final RandomEngine randomEngine;
     private final InterpretationService interpreter;
     public TarotService(RandomEngine randomEngine, InterpretationService interpreter) { this.randomEngine = randomEngine; this.interpreter = interpreter; }
+    public Reading draw(String question, SpreadType type) {
+        return draw(question, type, true, ReadingTheme.GENERAL);
+    }
     public Reading draw(String question, SpreadType type, boolean allowReversed) {
         return draw(question, type, allowReversed, ReadingTheme.GENERAL);
     }

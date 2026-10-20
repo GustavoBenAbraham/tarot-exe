@@ -25,9 +25,7 @@ public final class TarotApp extends Application {
     private final CardImages cardImages = new CardImages();
     private final TarotService tarot = new TarotService(new RandomEngine(), new LocalInterpretationService());
     private final ComboBox<SpreadType> spread = new ComboBox<>();
-    private final ComboBox<ReadingTheme> readingTheme = new ComboBox<>();
     private final TextField question = new TextField();
-    private final CheckBox reversed = new CheckBox("Permitir invertidas");
     private final TilePane cards = new TilePane(14, 14);
     private final TextArea interpretation = new TextArea();
     private final Label status = new Label("Pronto para iniciar uma tiragem.");
@@ -41,9 +39,7 @@ public final class TarotApp extends Application {
 
         Label title = new Label("Tarot.exe"); title.getStyleClass().add("title-bar"); title.setMaxWidth(Double.MAX_VALUE);
         spread.getItems().addAll(SpreadType.values()); spread.setValue(SpreadType.THREE);
-        readingTheme.getItems().addAll(ReadingTheme.values()); readingTheme.setValue(ReadingTheme.GENERAL);
-        readingTheme.setId("readingTheme");
-        reversed.setSelected(true); question.setPromptText("Sua pergunta (opcional, até 500 caracteres)");
+        question.setPromptText("Sua pergunta (opcional, até 500 caracteres)");
         Button draw = new Button("Embaralhar e tirar cartas"); draw.setDefaultButton(true);
         Button clear = new Button("Nova tiragem");
         save.setId("saveReading"); save.setDisable(true);
@@ -64,8 +60,8 @@ public final class TarotApp extends Application {
         });
         Button historyButton = new Button("Histórico"); historyButton.setId("history");
         historyButton.setOnAction(e -> HistoryWindow.show(stage, history, entry -> {
-            currentAllowReversed = entry.allowReversed(); reversed.setSelected(currentAllowReversed);
-            spread.setValue(entry.reading().type()); readingTheme.setValue(entry.reading().theme());
+            currentAllowReversed = entry.allowReversed();
+            spread.setValue(entry.reading().type());
             question.setText(entry.reading().question()); display(entry.reading(), entry.interpretation());
             save.setDisable(true); status.setText("Tiragem reaberta do histórico.");
         }));
@@ -79,7 +75,7 @@ public final class TarotApp extends Application {
                 status.setText("Não foi possível salvar. Verifique espaço e permissões da pasta; a leitura continua disponível.");
             }
         });
-        question.setId("question"); spread.setId("spread"); reversed.setId("reversed");
+        question.setId("question"); spread.setId("spread");
         cards.setId("cards"); interpretation.setId("interpretation"); status.setId("status");
         draw.setId("draw"); clear.setId("clear");
         Label questionCount = new Label(); questionCount.setId("questionCount");
@@ -91,8 +87,8 @@ public final class TarotApp extends Application {
         var questionTooLong = question.lengthProperty().greaterThan(500);
         questionError.visibleProperty().bind(questionTooLong);
         questionError.managedProperty().bind(questionTooLong);
-        draw.disableProperty().bind(questionTooLong.or(spread.valueProperty().isNull()).or(readingTheme.valueProperty().isNull()));
-        FlowPane settings = new FlowPane(10, 6, new Label("Tipo:"), spread, reversed, new Label("Tema:"), readingTheme);
+        draw.disableProperty().bind(questionTooLong.or(spread.valueProperty().isNull()));
+        FlowPane settings = new FlowPane(10, 6, new Label("Tipo:"), spread);
         settings.setAlignment(Pos.CENTER_LEFT);
         settings.getChildren().addAll(draw, clear, save, historyButton);
         Region questionSpacer = new Region(); HBox.setHgrow(questionSpacer, Priority.ALWAYS);
@@ -125,8 +121,8 @@ public final class TarotApp extends Application {
         body.setPadding(new Insets(12)); status.getStyleClass().add("status"); status.setWrapText(true);
         draw.setOnAction(e -> {
             try {
-                Reading reading = tarot.draw(question.getText(), spread.getValue(), reversed.isSelected(), readingTheme.getValue());
-                currentAllowReversed = reversed.isSelected();
+                Reading reading = tarot.draw(question.getText(), spread.getValue());
+                currentAllowReversed = true;
                 display(reading, tarot.interpret(reading)); save.setDisable(false);
                 status.setText("Tiragem concluída: " + reading.cards().size() + " carta(s). Interpretação offline.");
             } catch (Exception ex) { new Alert(Alert.AlertType.ERROR, ex.getMessage()).showAndWait(); }

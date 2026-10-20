@@ -284,21 +284,18 @@ class TarotAppTest {
                 var cards = (Pane) root.lookup("#cards");
                 var interpretation = (TextArea) root.lookup("#interpretation");
                 question.setText("Como seguir?");
-                @SuppressWarnings("unchecked")
-                var theme = (ComboBox<com.tarotexe.domain.ReadingTheme>) root.lookup("#readingTheme");
-                theme.setValue(com.tarotexe.domain.ReadingTheme.WORK);
+                assertNull(root.lookup("#readingTheme"));
+                assertNull(root.lookup("#reversed"));
                 draw.fire();
                 assertEquals(3, cards.getChildren().size());
                 assertTrue(interpretation.getText().contains("Como seguir?"));
-                assertTrue(interpretation.getText().contains("FOCO: Trabalho e projetos"));
+                assertTrue(interpretation.getText().contains("FOCO: Geral"));
                 @SuppressWarnings("unchecked")
                 var spread = (ComboBox<SpreadType>) root.lookup("#spread");
                 spread.setValue(SpreadType.ONE);
-                ((CheckBox) root.lookup("#reversed")).setSelected(false);
                 draw.fire();
                 assertEquals(1, cards.getChildren().size());
-                assertTrue(interpretation.getText().contains("(Normal)"));
-                assertFalse(interpretation.getText().contains("(Invertida)"));
+                assertTrue(interpretation.getText().contains("(Normal)") || interpretation.getText().contains("(Invertida)"));
                 ((Button) root.lookup("#clear")).fire();
                 assertTrue(cards.getChildren().isEmpty());
                 assertEquals("", question.getText());

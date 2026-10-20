@@ -3,7 +3,7 @@ Versao 0.2.0 - Windows 10/11, 64 bits
 
 Abra Tarot.exe. Java ja esta incluido: nao precisa instalar Java, Maven ou Eclipse.
 
-Digite uma pergunta, escolha o tema e sorteie as cartas.
+Digite uma pergunta e sorteie as cartas. Normais e invertidas sempre sao possiveis.
 As cartas ficam a esquerda; a leitura fica a direita.
 Arraste a divisoria para ajustar as colunas. Clique em uma carta para ampliar.
 A+ e A- ajustam o texto. F11 alterna tela cheia; Esc retorna.

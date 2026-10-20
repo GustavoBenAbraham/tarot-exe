@@ -8,8 +8,7 @@ A prioridade atual é aprofundar a matemática do sorteio, depois trabalhar o vi
 
 - Uma ou três cartas, sem repetição dentro da tiragem.
 - Embaralhamento com SecureRandom; cada nova tiragem começa com as 78 cartas.
-- Inversões habilitadas por padrão: 50% normal e 50% invertida, independentemente para cada carta.
-- Desativar invertidas mantém todas as cartas normais.
+- Inversões sempre habilitadas: 50% normal e 50% invertida, independentemente para cada carta.
 - Pergunta, tema e histórico não interferem no sorteio.
 
 Os estudos de probabilidade permanecem no codigo e na documentacao. As leituras continuam usando os catálogos e regras locais existentes.
@@ -27,3 +26,5 @@ Ilustrações: Pamela Colman Smith, Rider–Waite–Smith (1909). [Créditos](sr
 ## Referência de estudo atual
 
 As interpretações foram revisadas com base no PDF de *78 Graus de Sabedoria*, de Rachel Pollack, fornecido pelo usuário. O [mapa de referência](docs/REFERENCIA-LEITURAS.md) documenta páginas, critérios de adaptação e limites. As respostas continuam sendo compostas por textos e regras locais.
+
+Todas as novas tiragens usam leitura geral, sem seletor de tema ou controle para desativar invertidas.
