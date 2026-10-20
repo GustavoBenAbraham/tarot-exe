@@ -47,7 +47,7 @@ final class HistoryWindow {
             catch (IOException ex) { message.setText("Não foi possível excluir a tiragem. O histórico não foi alterado."); }
         });
         var split = new SplitPane(list, preview); split.setDividerPositions(0.45); VBox.setVgrow(split, Priority.ALWAYS);
-        var heading = new Label("✦  Arquivo de tiragens"); heading.getStyleClass().add("title-bar"); heading.setMaxWidth(Double.MAX_VALUE);
+        var heading = new Label("Historico de tiragens"); heading.getStyleClass().add("title-bar"); heading.setMaxWidth(Double.MAX_VALUE);
         var content = new VBox(10, split, new HBox(10, open, delete), message); content.setPadding(new Insets(12));
         VBox.setVgrow(content, Priority.ALWAYS); open.getStyleClass().add("primary-button");
         var root = new VBox(heading, content);

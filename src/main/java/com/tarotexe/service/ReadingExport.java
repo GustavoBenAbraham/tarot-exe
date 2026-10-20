@@ -9,7 +9,7 @@ import java.time.format.DateTimeFormatter;
 public final class ReadingExport {
     private ReadingExport() {}
     public static String text(Reading reading, String local) {
-        String header = "TAROT.EXE · Gabinete dos Arcanos\n"
+        String header = "TAROT.EXE\n"
                 + reading.createdAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"))
                 + " · " + reading.type() + " · " + reading.theme() + "\n\n";
         return header + local + "\n";

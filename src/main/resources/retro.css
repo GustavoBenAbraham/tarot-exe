@@ -1,49 +1,36 @@
-﻿/* Gabinete dos Arcanos: papel, tinta e Windows clássico. */
-.root { -fx-font-family: "Tahoma", "Arial"; -fx-font-size: 13px; -fx-base: #cbc5b6; -fx-background: #cbc5b6; -fx-background-color: #cbc5b6; -fx-control-inner-background: #f7f0df; -fx-text-base-color: #302d28; -fx-accent: #394c58; -fx-focus-color: #785444; -fx-faint-focus-color: transparent; }
-.label { -fx-text-fill: #302d28; }
-.menu-bar { -fx-background-color: #cbc5b6; -fx-border-color: #eee8d9 #716b60 #716b60 #eee8d9; -fx-border-width: 1; }
-.menu:showing, .menu:hover { -fx-background-color: #293e4e; }
-.menu:showing > .label, .menu:hover > .label { -fx-text-fill: #fff5dd; }
-.context-menu { -fx-background-color: #e0d8c6; -fx-background-radius: 0; }
-.title-bar { -fx-background-color: linear-gradient(to right, #203649, #384b55); -fx-text-fill: #f6e7c1; -fx-font-family: "Georgia", "Times New Roman"; -fx-font-weight: bold; -fx-font-size: 20px; -fx-padding: 11 14; -fx-border-color: #f1dfb1 #172b38 #172b38 #f1dfb1; -fx-border-width: 1; }
-.window-toolbar { -fx-background-color: #bdb6a5; -fx-border-color: transparent transparent #928875 transparent; -fx-border-width: 1; }
-.window-toolbar .button { -fx-font-size: 11px; -fx-padding: 3 10; }
-.panel { -fx-background-color: #d8d1c0; -fx-border-color: #fff8e7 #81796b #81796b #fff8e7; -fx-border-width: 2; -fx-padding: 10; }
-.button, .combo-box { -fx-background-color: #d5cebc; -fx-background-radius: 0; -fx-border-radius: 0; -fx-border-color: #fff8e6 #665e50 #665e50 #fff8e6; -fx-border-width: 2; -fx-padding: 5 10; -fx-text-fill: #302d28; -fx-cursor: hand; }
-.button:hover { -fx-background-color: #e4dcc8; }
-.button:pressed { -fx-border-color: #665e50 #fff8e6 #fff8e6 #665e50; -fx-background-color: #c5bca7; }
-.primary-button { -fx-background-color: #643e46; -fx-text-fill: #fff5df; -fx-border-color: #a77f80 #38262b #38262b #a77f80; }
-.primary-button:hover { -fx-background-color: #79505a; }
-.primary-button:pressed { -fx-background-color: #51313a; }
-.button:disabled { -fx-opacity: 0.5; -fx-cursor: default; }
-.text-field, .text-area, .list-view { -fx-background-radius: 0; -fx-border-color: #817665 #fff8e6 #fff8e6 #817665; -fx-border-width: 2; -fx-control-inner-background: #f7f0df; -fx-text-fill: #302d28; -fx-prompt-text-fill: #776f63; -fx-highlight-fill: #536370; -fx-highlight-text-fill: #fff8e8; }
-.text-field { -fx-padding: 7 8; }
-.check-box .box { -fx-background-radius: 0; -fx-background-color: #f7f0df; -fx-border-color: #817665 #fff8e6 #fff8e6 #817665; -fx-border-width: 2; }
-.check-box:selected .mark { -fx-background-color: #643e46; }
-.section-heading { -fx-font-family: "Georgia", "Times New Roman"; -fx-font-size: 17px; -fx-text-fill: #593c42; -fx-padding: 0 0 0 2; }
-.card-table { -fx-background-color: #756e5b; -fx-border-color: #756b58 #fff5df #fff5df #756b58; -fx-border-width: 2; -fx-padding: 5; }
-.card-table > .viewport { -fx-background-color: #3d5050; }
-.tarot-card { -fx-background-color: #f1e6cc; -fx-border-color: #b6a77e #4d4335 #4d4335 #b6a77e; -fx-border-width: 2; -fx-padding: 12 10; -fx-effect: dropshadow(gaussian, rgba(17, 24, 24, 0.35), 4, 0, 2, 3); }
-.card-name { -fx-font-family: "Georgia", "Times New Roman"; -fx-font-size: 16px; -fx-text-fill: #352b26; -fx-text-alignment: center; }
-.card-position { -fx-font-size: 11px; -fx-text-fill: #65424b; -fx-font-weight: bold; }
-.card-orientation { -fx-font-size: 11px; -fx-text-fill: #746854; }
-.card-icon { -fx-font-size: 28px; -fx-text-fill: #643e46; }
-.reading-paper { -fx-font-family: "Georgia", "Times New Roman"; -fx-font-size: 15px; }
-.reading-paper .content { -fx-background-color: #f7f0df; -fx-padding: 14; -fx-background-radius: 0; }
-.reading-paper .text { -fx-line-spacing: 3px; }
-.reading-split { -fx-background-color: transparent; -fx-padding: 0; -fx-border-width: 0; }
-.split-pane-divider { -fx-background-color: #b4aa94; -fx-padding: 3; -fx-border-color: #eee6d3 #857a65 #857a65 #eee6d3; -fx-border-width: 1; }
-.scroll-bar { -fx-background-color: #c4baa5; -fx-background-radius: 0; }
-.scroll-bar .thumb { -fx-background-color: #d9cfb9; -fx-background-radius: 0; -fx-border-color: #fff5df #8a7c65 #8a7c65 #fff5df; -fx-border-width: 1; }
-.list-cell { -fx-background-color: #f7f0df; -fx-text-fill: #302d28; -fx-padding: 10; }
-.list-cell:filled:odd { -fx-background-color: #eee4ce; }
-.list-cell:filled:selected { -fx-background-color: #394c58; -fx-text-fill: #fff2d5; }
-.status { -fx-background-color: #c4bcaa; -fx-border-color: #817665 #f5ecd8 #f5ecd8 #817665; -fx-border-width: 1; -fx-padding: 6 10; -fx-max-width: Infinity; -fx-font-size: 11px; }
-/* Keep selected ComboBox values in the same warm control surface. */
-.combo-box > .list-cell { -fx-background-color: transparent; -fx-text-fill: #302d28; -fx-padding: 2 6; }
-.reading-split { -fx-background-color: #cbc5b6; }
-/* Editor em colunas: abas clássicas, mantendo a paleta vintage. */
-.tab-pane > .tab-header-area > .tab-header-background { -fx-background-color: #bdb6a5; }
-.tab-pane .tab { -fx-background-color: #d5cebc; -fx-background-radius: 0; -fx-border-color: #fff5df #817665 #817665 #fff5df; -fx-border-width: 1; -fx-padding: 5 12; }
-.tab-pane .tab:selected { -fx-background-color: #f7f0df; -fx-border-color: #643e46 #817665 #f7f0df #fff5df; -fx-border-width: 3 1 1 1; }
-.tab-pane .tab .tab-label { -fx-text-fill: #302d28; }
+﻿/* Interface de utilitario desktop classico. */
+.root { -fx-font-family: "Tahoma", "Arial"; -fx-font-size: 13px; -fx-base: #c0c0c0; -fx-background: #c0c0c0; -fx-background-color: #c0c0c0; -fx-control-inner-background: white; -fx-text-base-color: black; -fx-accent: #000080; -fx-focus-color: #000080; -fx-faint-focus-color: transparent; }
+.label { -fx-text-fill: black; }
+.menu-bar, .context-menu { -fx-background-color: #c0c0c0; }
+.menu:hover, .menu:showing { -fx-background-color: #000080; }
+.menu:hover > .label, .menu:showing > .label { -fx-text-fill: white; }
+.title-bar { -fx-background-color: #000080; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 7 10; }
+.window-toolbar { -fx-background-color: #c0c0c0; }
+.window-toolbar .button { -fx-font-size: 11px; -fx-padding: 3 8; }
+.panel { -fx-background-color: #c0c0c0; -fx-border-color: white #808080 #808080 white; -fx-border-width: 1; -fx-padding: 10; }
+.button, .combo-box { -fx-background-color: #c0c0c0; -fx-background-radius: 0; -fx-border-radius: 0; -fx-border-color: white #404040 #404040 white; -fx-border-width: 2; -fx-padding: 5 10; -fx-text-fill: black; }
+.button:hover { -fx-background-color: #d0d0d0; }
+.button:pressed { -fx-border-color: #404040 white white #404040; }
+.button:disabled { -fx-opacity: 0.5; }
+.text-field, .text-area, .list-view { -fx-background-radius: 0; -fx-border-color: #808080 white white #808080; -fx-border-width: 2; -fx-control-inner-background: white; -fx-text-fill: black; -fx-prompt-text-fill: #707070; -fx-highlight-fill: #000080; -fx-highlight-text-fill: white; }
+.text-field { -fx-padding: 6 8; }
+.check-box .box { -fx-background-radius: 0; -fx-background-color: white; -fx-border-color: #808080 white white #808080; -fx-border-width: 2; }
+.check-box:selected .mark { -fx-background-color: black; }
+.section-heading { -fx-font-size: 13px; -fx-font-weight: bold; -fx-padding: 3 0; }
+.card-table { -fx-background-color: #808080; -fx-border-color: #808080 white white #808080; -fx-border-width: 2; -fx-padding: 2; }
+.card-table > .viewport { -fx-background-color: #a0a0a0; }
+.tarot-card { -fx-background-color: #eeeeee; -fx-border-color: white #808080 #808080 white; -fx-border-width: 1; -fx-padding: 12 10; }
+.card-name { -fx-font-size: 14px; -fx-font-weight: bold; -fx-text-alignment: center; }
+.card-position { -fx-font-size: 11px; -fx-font-weight: bold; }
+.card-orientation, .card-icon { -fx-font-size: 11px; -fx-text-fill: #505050; }
+.reading-paper { -fx-font-family: "Tahoma", "Arial"; }
+.reading-paper .content { -fx-background-color: white; -fx-padding: 12; -fx-background-radius: 0; }
+.reading-paper .text { -fx-line-spacing: 2px; }
+.reading-split { -fx-background-color: #c0c0c0; -fx-padding: 0; -fx-border-width: 0; }
+.split-pane-divider { -fx-background-color: #c0c0c0; -fx-padding: 3; }
+.scroll-bar { -fx-background-color: #e0e0e0; -fx-background-radius: 0; }
+.scroll-bar .thumb { -fx-background-color: #c0c0c0; -fx-background-radius: 0; -fx-border-color: white #808080 #808080 white; -fx-border-width: 1; }
+.list-cell { -fx-background-color: white; -fx-text-fill: black; -fx-padding: 8; }
+.list-cell:filled:selected { -fx-background-color: #000080; -fx-text-fill: white; }
+.combo-box > .list-cell { -fx-background-color: transparent; -fx-text-fill: black; -fx-padding: 2 6; }
+.status { -fx-background-color: #c0c0c0; -fx-border-color: #808080 white white #808080; -fx-border-width: 1; -fx-padding: 5 8; -fx-max-width: Infinity; -fx-font-size: 11px; }

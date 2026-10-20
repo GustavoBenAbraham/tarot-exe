@@ -38,9 +38,6 @@ class DocumentationScreenshots {
                 ((ListView<?>) archive.getScene().lookup("#historyList")).getSelectionModel().selectFirst();
                 ((Button) archive.getScene().lookup("#historyOpen")).fire();
                 capture(root, 1400, 900, "01-leitura-local.png");
-                var tabs = (TabPane) root.lookup("#readingTabs"); tabs.getSelectionModel().select(1);
-                capture(root, 1400, 900, "02-probabilidades.png");
-                tabs.getSelectionModel().select(0);
                 var card = ((Pane) root.lookup("#cards")).getChildren().get(1);
                 card.getOnKeyPressed().handle(new javafx.scene.input.KeyEvent(javafx.scene.input.KeyEvent.KEY_PRESSED,
                         "", "", javafx.scene.input.KeyCode.ENTER, false, false, false, false));

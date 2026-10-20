@@ -38,10 +38,7 @@ class TarotAppTest {
                 assertNull(root.lookup("#aiConfigure"));
                 assertTrue(((Button) root.lookup("#exportReading")).isDisabled());
                 ((Button) root.lookup("#draw")).fire();
-                var tabs = (TabPane) root.lookup("#readingTabs");
-                assertEquals("Probabilidades", tabs.getTabs().get(1).getText());
-                var probabilities = (TextArea) tabs.getTabs().get(1).getContent();
-                assertTrue(probabilities.getText().contains("3651648"));
+                assertNull(root.lookup("#readingTabs"));
                 assertFalse(((Button) root.lookup("#exportReading")).isDisabled());
                 assertFalse(((Button) root.lookup("#copyReading")).isDisabled());
                 ((Button) root.lookup("#largerText")).fire();
@@ -49,7 +46,6 @@ class TarotAppTest {
                 ((Button) root.lookup("#smallerText")).fire();
                 assertTrue(((TextArea) root.lookup("#interpretation")).getStyle().contains("15px"));
                 ((Button) root.lookup("#clear")).fire();
-                assertEquals("", probabilities.getText());
                 assertTrue(((Button) root.lookup("#exportReading")).isDisabled());
                 assertTrue(((Button) root.lookup("#copyReading")).isDisabled());
             } finally { stage.close(); }

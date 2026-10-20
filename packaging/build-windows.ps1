@@ -28,7 +28,7 @@ try {
     $imageOutput = Join-Path $buildRoot 'image'
     $icon = Join-Path $PSScriptRoot 'app.ico'
     & (Join-Path $env:JAVA_HOME 'bin/jpackage.exe') --type app-image --name Tarot --app-version $releaseVersion `
-        --vendor 'Gabinete dos Arcanos' --description 'Tarot.exe - leituras locais' `
+        --vendor 'Tarot.exe' --description 'Tarot.exe - leituras locais' `
         --input $inputFolder --main-jar "tarot-exe-$releaseVersion.jar" --main-class com.tarotexe.Launcher `
         --icon $icon --dest $imageOutput --java-options '-Dfile.encoding=UTF-8' `
         --add-modules 'java.se,jdk.unsupported,jdk.crypto.ec,jdk.charsets'

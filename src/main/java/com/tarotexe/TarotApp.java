@@ -2,7 +2,6 @@ package com.tarotexe;
 
 import com.tarotexe.domain.*;
 import com.tarotexe.engine.RandomEngine;
-import com.tarotexe.engine.ProbabilityModel;
 import com.tarotexe.service.*;
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -15,8 +14,6 @@ import javafx.stage.Screen;
 
 public final class TarotApp extends Application {
     private final HistoryStore history;
-    private final TextArea probabilities = new TextArea();
-    private final TabPane readingTabs = new TabPane();
     private final Button export = new Button("Exportar .txt");
     private final Button copy = new Button("Copiar leitura");
     private final javafx.beans.property.IntegerProperty readingFontSize = new javafx.beans.property.SimpleIntegerProperty(15);
@@ -42,12 +39,12 @@ public final class TarotApp extends Application {
         about.setOnAction(e -> new Alert(Alert.AlertType.INFORMATION, "Tarot.exe " + AppInfo.VERSION + "\nSorteio e leitura por cat\u00e1logo inteiramente locais.\nIlustrações: Pamela Colman Smith, Rider–Waite–Smith (1909).\nHistórico e configurações: .tarot-exe, na sua pasta de usuário.").showAndWait());
         help.getItems().add(about); menu.getMenus().addAll(file, help);
 
-        Label title = new Label("✦  TAROT.EXE  ·  Gabinete dos Arcanos"); title.getStyleClass().add("title-bar"); title.setMaxWidth(Double.MAX_VALUE);
+        Label title = new Label("Tarot.exe"); title.getStyleClass().add("title-bar"); title.setMaxWidth(Double.MAX_VALUE);
         spread.getItems().addAll(SpreadType.values()); spread.setValue(SpreadType.THREE);
         readingTheme.getItems().addAll(ReadingTheme.values()); readingTheme.setValue(ReadingTheme.GENERAL);
         readingTheme.setId("readingTheme");
         reversed.setSelected(true); question.setPromptText("Sua pergunta (opcional, até 500 caracteres)");
-        Button draw = new Button("☷ Embaralhar e tirar cartas"); draw.setDefaultButton(true);
+        Button draw = new Button("Embaralhar e tirar cartas"); draw.setDefaultButton(true);
         Button clear = new Button("Nova tiragem");
         save.setId("saveReading"); save.setDisable(true);
         export.setId("exportReading"); export.setDisable(true); copy.setId("copyReading"); copy.setDisable(true);
@@ -110,22 +107,16 @@ public final class TarotApp extends Application {
         interpretation.getStyleClass().add("reading-paper");
         interpretation.styleProperty().bind(readingFontSize.asString("-fx-font-size: %dpx;"));
         interpretation.setPromptText("Embaralhe as cartas e reserve um momento para sua leitura.");
-        Label cardsHeading = new Label("✧  As cartas"); cardsHeading.getStyleClass().add("section-heading");
-        Label readingHeading = new Label("✧  Caderno de leitura"); readingHeading.getStyleClass().add("section-heading");
-        probabilities.setId("probabilities"); probabilities.setEditable(false); probabilities.setWrapText(true);
-        probabilities.getStyleClass().add("reading-paper");
-        probabilities.styleProperty().bind(readingFontSize.asString("-fx-font-size: %dpx;"));
-        probabilities.setPromptText("Sorteie as cartas para consultar o modelo probabil\u00edstico da tiragem.");
-        readingTabs.setId("readingTabs"); readingTabs.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
-        readingTabs.getTabs().addAll(new Tab("Leitura local", interpretation), new Tab("Probabilidades", probabilities));
+        Label cardsHeading = new Label("Cartas"); cardsHeading.getStyleClass().add("section-heading");
+        Label readingHeading = new Label("Leitura"); readingHeading.getStyleClass().add("section-heading");
         var smallerText = new Button("A−"); smallerText.setId("smallerText"); smallerText.setTooltip(new Tooltip("Diminuir texto"));
         var largerText = new Button("A+"); largerText.setId("largerText"); largerText.setTooltip(new Tooltip("Aumentar texto"));
         smallerText.setOnAction(e -> readingFontSize.set(Math.max(12, readingFontSize.get() - 1)));
         largerText.setOnAction(e -> readingFontSize.set(Math.min(22, readingFontSize.get() + 1)));
         var readingActions = new FlowPane(6, 6, copy, export, smallerText, largerText);
         VBox cardSection = new VBox(6, cardsHeading, scroll); cardSection.setId("cardColumn"); VBox.setVgrow(scroll, Priority.ALWAYS); cardSection.setMinSize(240, 110);
-        VBox readingSection = new VBox(6, readingHeading, readingActions, readingTabs); readingSection.setId("readingColumn");
-        VBox.setVgrow(readingTabs, Priority.ALWAYS); readingSection.setMinSize(280, 180); readingTabs.setMinHeight(110);
+        VBox readingSection = new VBox(6, readingHeading, readingActions, interpretation); readingSection.setId("readingColumn");
+        VBox.setVgrow(interpretation, Priority.ALWAYS); readingSection.setMinSize(280, 180); interpretation.setMinHeight(110);
         SplitPane readingSplit = new SplitPane(cardSection, readingSection); readingSplit.setId("workspaceColumns");
         readingSplit.setOrientation(javafx.geometry.Orientation.HORIZONTAL);
         readingSplit.setDividerPositions(0.58); readingSplit.getStyleClass().add("reading-split");
@@ -140,10 +131,10 @@ public final class TarotApp extends Application {
                 status.setText("Tiragem concluída: " + reading.cards().size() + " carta(s). Interpretação offline.");
             } catch (Exception ex) { new Alert(Alert.AlertType.ERROR, ex.getMessage()).showAndWait(); }
         });
-        clear.setOnAction(e -> { currentReading = null; probabilities.clear(); save.setDisable(true); export.setDisable(true); copy.setDisable(true); cards.getChildren().clear(); interpretation.clear(); question.clear(); status.setText("Pronto para nova tiragem."); });
+        clear.setOnAction(e -> { currentReading = null; save.setDisable(true); export.setDisable(true); copy.setDisable(true); cards.getChildren().clear(); interpretation.clear(); question.clear(); status.setText("Pronto para nova tiragem."); });
         Scene scene = new Scene(container, 960, 800);
         scene.getStylesheets().add(getClass().getResource("/retro.css").toExternalForm());
-        stage.setTitle("Tarot.exe - Windows Retro Edition"); stage.setScene(scene); stage.setResizable(true);
+        stage.setTitle("Tarot.exe"); stage.setScene(scene); stage.setResizable(true);
         var windowControls = WindowControls.create(stage);
         windowControls.getStyleClass().add("window-toolbar");
         windowControls.setPadding(new Insets(4, 12, 4, 12));
@@ -173,16 +164,14 @@ public final class TarotApp extends Application {
         stage.show();
     }
     private void display(Reading reading, String text) {
-        readingTabs.getSelectionModel().select(0);
-        probabilities.setText(ProbabilityModel.describe(reading, currentAllowReversed));
         currentReading = reading; cards.getChildren().clear();
         for (DrawnCard selected : reading.cards()) cards.getChildren().add(cardPanel(selected));
         interpretation.setText(text); interpretation.positionCaret(0);
         export.setDisable(false); copy.setDisable(false);
     }
-    private String exportText() { return ReadingExport.text(currentReading, interpretation.getText()) + "\n" + probabilities.getText(); }
+    private String exportText() { return ReadingExport.text(currentReading, interpretation.getText()); }
     private VBox cardPanel(DrawnCard drawn) {
-        Label icon = new Label(drawn.reversed() ? "Ⅹ ✧ Ⅹ" : "✦ ✧ ✦"); icon.getStyleClass().add("card-icon");
+        Label icon = new Label("Imagem indisponivel"); icon.getStyleClass().add("card-icon");
         Label name = new Label(drawn.card().name()); name.setWrapText(true);
         name.getStyleClass().add("card-name");
         Label orientation = new Label(drawn.orientation()); Label position = new Label(drawn.position());

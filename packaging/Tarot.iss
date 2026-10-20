@@ -9,7 +9,7 @@
 AppId={{5DB2DA46-3B15-42E3-BA24-B35CE1819427}
 AppName=Tarot.exe
 AppVersion={#AppVersion}
-AppPublisher=Gabinete dos Arcanos
+AppPublisher=Tarot.exe
 AppComments=Sorteio e leituras de tarot inteiramente locais.
 DefaultDirName={localappdata}\Programs\Tarot
 DefaultGroupName=Tarot.exe

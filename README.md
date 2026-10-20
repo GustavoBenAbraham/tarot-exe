@@ -1,4 +1,4 @@
-﻿# Tarot.exe · Gabinete dos Arcanos
+# Tarot.exe · Tarot.exe
 
 Aplicativo desktop Java/JavaFX com 78 cartas ilustradas, sorteio e leituras inteiramente locais. A integração com IA foi removida.
 
@@ -12,7 +12,7 @@ A prioridade atual é aprofundar a matemática do sorteio, depois trabalhar o vi
 - Desativar invertidas mantém todas as cartas normais.
 - Pergunta, tema e histórico não interferem no sorteio.
 
-A aba Probabilidades apresenta as chances e as contagens de resultados da tiragem exibida. As leituras continuam usando os catálogos e regras locais existentes.
+Os estudos de probabilidade permanecem no codigo e na documentacao. As leituras continuam usando os catálogos e regras locais existentes.
 
 ## Desenvolvimento
 
