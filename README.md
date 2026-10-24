@@ -1,3 +1,5 @@
+**Português** | [English](README.en.md)
+
 # Tarot.exe · Tarot.exe
 
 Aplicativo desktop Java/JavaFX com 78 cartas ilustradas, sorteio e leituras inteiramente locais. A integração com IA foi removida.
